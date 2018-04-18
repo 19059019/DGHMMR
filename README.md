@@ -12,4 +12,4 @@ contributors: (Please add your email)
 
 20058837@sun.ac.za
 
-19152035@sun.ac.za <-- most awesome person in the universe 
+19152035@sun.ac.za 
