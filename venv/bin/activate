@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/ryan/Desktop/neo4j-flask/neo4j-flask/venv"
+VIRTUAL_ENV="/home/ryan/Desktop/QuoraLite/DGHMMR/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

@@ -1,4 +1,4 @@
-#!/home/ryan/Desktop/neo4j-flask/neo4j-flask/venv/bin/python
+#!/home/ryan/Desktop/QuoraLite/DGHMMR/venv/bin/python
 
 import sys
 import getopt
