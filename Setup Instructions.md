@@ -20,3 +20,6 @@
         1. To set the correct java version use the command `sudo update-java-alternatives --set  [your java8 version] e.g java-1.8.0-openjdk-amd64` 
         
 1. Follow the instructions at https://github.com/nicolewhite/neo4j-flask to install neo4j-flask.
+
+# running neo4j: 	1.sudo neo4j start
+#                	2.python run.py (from DGHMMR)

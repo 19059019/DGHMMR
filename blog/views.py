@@ -1,5 +1,6 @@
 from .models import User, get_todays_recent_posts
 from flask import Flask, request, session, redirect, url_for, render_template, flash
+import re
 
 app = Flask(__name__)
 
@@ -13,11 +14,14 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        if len(username) < 1:
-            flash('Your username must be at least one character.')
-        elif len(password) < 5:
-            flash('Your password must be at least 5 characters.')
+        
+        matchUser = re.match(r"^([A-Z][A-Za-z0-9].{3,13})$", username, flags=0)
+        matchPass = re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", password, flags=0)
+        
+        if not matchUser:
+            flash('Your username must start with a capital and consist of only letters and digits')
+        elif not matchPass:
+            flash('Your password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
         elif not User(username).register(password):
             flash('A user with that username already exists.')
         else:

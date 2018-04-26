@@ -1,26 +1,13 @@
- <h2>Register</h2>
-	<form name="registerForm">
-        Username:
-        <input type="text" id="un" name="username"><br><br>
-        Password:
-        <input type="password" id="pw" name="pass"><br><br>  
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Register</h2>
+	<form action="{{ url_for('register') }}" method="post">
+        <dl>
+            <dt>Username:</dt>
+            <dd><input type="text" name="username"></dd>
+            <dt>Password:</dt>
+            <dd><input type="password" name="password"></dd>
+        </dl>
+        <input type="submit" value="Register">
 	</form>
-    <button onclick="register()">Register</button>
-    <script>
-        function register() {
-            var u = document.forms["registerForm"]["username"].value;
-            var p = document.forms["registerForm"]["pass"].value;
-            if (!/^([A-Z][A-Za-z0-9].{3,13})$/.test(u)) {
-                alert("Usernames must be between 5 and 15 symbols long, should only use letters and digits, must start with a capital letter");
-                document.getElementById('un').value = "";
-            } else if (!/^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$/.test(p)) {
-                alert("Passwords must be at least eight characters long and contain one or more of each of the following: lower-case letter, upper-case letter, digit");
-                document.getElementById('pw').value = "";
-            } else {
-                //add to database
-                alert("User: " + u + " created!");
-                document.getElementById('un').value = "";
-                document.getElementById('pw').value = "";
-            }        
-        }
-    </script>
+{% endblock %}
