@@ -1,4 +1,4 @@
-## Running instructions for neo4j and website:	
+# Running instructions for neo4j and website:	
 
 1. sudo neo4j start
 	
