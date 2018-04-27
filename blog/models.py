@@ -107,6 +107,17 @@ def get_todays_recent_posts():
 
     return graph.run(query, today=date())
 
+def search_users(username):
+    regex = "'(?i)^.*" + username + ".*$'"
+	
+    query = '''
+    MATCH (n:User)
+    WHERE n.username =~ ''' + regex + '''
+    RETURN n.username AS result_user
+    '''
+
+    return graph.run(query, regex=regex)
+
 def timestamp():
     epoch = datetime.utcfromtimestamp(0)
     now = datetime.now()

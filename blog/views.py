@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts
+from .models import User, get_todays_recent_posts, search_users
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
 
@@ -108,3 +108,18 @@ def profile(username):
         similar=similar,
         common=common
     )
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    username = request.form['username']
+	
+    results = search_users(username) 
+	
+    return render_template(
+	    'search_results.html',
+        results=results,
+		username=username
+    )
+	#include profile picture here when it comes out
+
+
