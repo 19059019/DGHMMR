@@ -3,5 +3,5 @@ export NEO4J_PASSWORD=neo4j1
 pip install virtualenv
 virtualenv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install --user -r requirements.txt
 python run.py
