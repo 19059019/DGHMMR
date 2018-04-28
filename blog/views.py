@@ -1,8 +1,13 @@
-from .models import User, get_todays_recent_posts, search_users
+from .models import User, get_todays_recent_posts, search_users, valid_file
+from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
+import os
+from werkzeug import secure_filename
 
 app = Flask(__name__)
+
+ICON_FOLDER = 'static/icons'
 
 @app.route('/')
 def index():
@@ -126,4 +131,46 @@ def search():
         results=results,
 		username=username
     )
-	#include profile picture here when it comes out
+    # TODO
+	#include profile picture here when it comes out (NODES now have icons attatched as .icon)
+
+@app.route('/profile/<username>/edit', methods=['GET','POST'])
+def edit_profile(username):
+    user = User(username)
+    if request.method == 'POST':
+        icon = request.files['icon']
+        bio = request.form['bio']
+        pass_old = request.form['pass_old']
+        pass_new = request.form['pass_new']
+        pass_new_confirm = request.form['pass_new_confirm']
+        if not valid_file(icon.filename):
+            print('not valid file')
+            flash('File name not accepted')
+        elif not user.verify_password(pass_new):
+            print('not verify_password')
+            flash('Incorrect Password')
+        elif pass_old != pass_new:
+            print('new passwords not equal')
+            flash("New Passwords don't match")
+        elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
+            print('password wrong')
+            flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
+        else:
+            print("before insertion")
+            password = bcrypt.encrypt(pass_new)
+            icon_name = secure_filename(icon.filename)
+            icon.save(os.path.join(ICON_FOLDER, icon_name))
+            query = """
+            MATCH (n:User)
+            WHERE n.username = {username}
+            SET n.bio = {bio}
+            SET n.icon = {icon_name}
+            SET n.password = {password}
+            """
+            print("After insertion")
+            return render_template(url_for('profile', username=username))
+    else:
+            return render_template('edit_profile.html',
+            username=username,
+            bio=user.get_bio(),
+            icon=user.get_icon())

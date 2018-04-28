@@ -136,6 +136,10 @@ def search_users(username):
 
     return graph.run(query, regex=regex)
 
+def valid_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ICON_EXTENSIONS
+
 def timestamp():
     epoch = datetime.utcfromtimestamp(0)
     now = datetime.now()

@@ -5,7 +5,7 @@
 <br>
 <p>
   {%for b in bio%}
-  Bio: <br>
+  <h3>Bio:</h3><br>
   {{b.bio}}
   {%endfor%}
   <br>
@@ -15,6 +15,7 @@
 </p>
 <br>
 {% if session.username %}
+<a href="{{ url_for('edit_profile', username=username)}}">Edit Profile</a>
     {% if session.username == username %}
         <h3>Users similar to you:</h3>
 
