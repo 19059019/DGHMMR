@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts, search_users, valid_file
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -7,7 +7,7 @@ from werkzeug import secure_filename
 
 app = Flask(__name__)
 
-ICON_FOLDER = 'static/icons'
+ICON_FOLDER = 'blog/static/icons/'
 
 @app.route('/')
 def index():
@@ -143,34 +143,25 @@ def edit_profile(username):
         pass_old = request.form['pass_old']
         pass_new = request.form['pass_new']
         pass_new_confirm = request.form['pass_new_confirm']
+        icon_name = secure_filename(icon.filename)
+        password = bcrypt.encrypt(pass_new)
         if not valid_file(icon.filename):
-            print('not valid file')
             flash('File name not accepted')
-        elif not user.verify_password(pass_new):
-            print('not verify_password')
+        elif not user.verify_password(pass_old):
             flash('Incorrect Password')
-        elif pass_old != pass_new:
-            print('new passwords not equal')
+        elif pass_new_confirm != pass_new:
             flash("New Passwords don't match")
         elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
-            print('password wrong')
             flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
-        else:
+        elif not icon.save(os.path.join(ICON_FOLDER, icon_name)):
             print("before insertion")
-            password = bcrypt.encrypt(pass_new)
-            icon_name = secure_filename(icon.filename)
-            icon.save(os.path.join(ICON_FOLDER, icon_name))
-            query = """
-            MATCH (n:User)
-            WHERE n.username = {username}
-            SET n.bio = {bio}
-            SET n.icon = {icon_name}
-            SET n.password = {password}
-            """
+            update_profile(username, bio, icon_name,password)
             print("After insertion")
             return render_template(url_for('profile', username=username))
-    else:
-            return render_template('edit_profile.html',
-            username=username,
-            bio=user.get_bio(),
-            icon=user.get_icon())
+        else:
+            flash("file upload failure")
+
+    return render_template('edit_profile.html',
+    username=username,
+    bio=user.get_bio(),
+    icon=user.get_icon())
