@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Edit {{ username }}'s profile:'</h2>
+  <form method="post" enctype="multipart/form-data">
+    <h3>Bio:</h3><br>
+    <input type="text" name="bio" value={{bio}}>
+    <h3>Icon:</h3><br>
+    <input type="file" name="icon" required>
+    <h3>Password:</h3><br>
+    old         : <input type="password" name="pass_old" required><br>
+    new         : <input type="password" name="pass_new"><br>
+    confirm new : <input type="password" name="pass_new_concern"><br>
+    <input type="submit" value="Make Changes">
+  </form>
+
+{% end block %}

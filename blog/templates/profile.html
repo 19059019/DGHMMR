@@ -2,7 +2,18 @@
 {% block body %}
 
 <h2>{{ username }}'s profile</h2>
-
+<br>
+<p>
+  {%for b in bio%}
+  Bio: <br>
+  {{b.bio}}
+  {%endfor%}
+  <br>
+  {%for i in icon%}
+  <img src="/static/icons/{{i.icon}}" alt="{{i.icon}}" style="max-width:50%;">
+  {%endfor%}
+</p>
+<br>
 {% if session.username %}
     {% if session.username == username %}
         <h3>Users similar to you:</h3>

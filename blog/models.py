@@ -7,6 +7,8 @@ import uuid
 url = os.environ.get('GRAPHENEDB_URL', 'http://localhost:7474')
 username = os.environ.get('NEO4J_USERNAME')
 password = os.environ.get('NEO4J_PASSWORD')
+ICON_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+default_icon = 'default.jpg'
 
 graph = Graph(url + '/db/data/', username=username, password=password)
 
@@ -20,7 +22,7 @@ class User:
 
     def register(self, password):
         if not self.find():
-            user = Node('User', username=self.username, password=bcrypt.encrypt(password))
+            user = Node('User', username=self.username, password=bcrypt.encrypt(password), icon=default_icon, bio="NO BIO")
             graph.create(user)
             return True
         else:
@@ -83,6 +85,22 @@ class User:
 
         return graph.run(query, username=self.username)
 
+    def get_bio(self):
+        query = '''
+        MATCH (n:User)
+        WHERE n.username = {username}
+        RETURN n.bio AS bio
+        '''
+        return graph.run(query, username=self.username)
+
+    def get_icon(self):
+        query = '''
+        MATCH (n:User)
+        WHERE n.username = {username}
+        RETURN n.icon AS icon
+        '''
+        return graph.run(query, username=self.username)
+
     def get_commonality_of_user(self, other):
         # Find how many of the logged-in user's posts the other user
         # has liked and which tags they've both blogged about.
@@ -109,7 +127,7 @@ def get_todays_recent_posts():
 
 def search_users(username):
     regex = "'(?i)^.*" + username + ".*$'"
-	
+
     query = '''
     MATCH (n:User)
     WHERE n.username =~ ''' + regex + '''

@@ -14,10 +14,10 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
+
         matchUser = re.match(r"^([A-Z][A-Za-z0-9].{3,13})$", username, flags=0)
         matchPass = re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", password, flags=0)
-        
+
         if not matchUser:
             flash('Your username must start with a capital and consist of only letters and digits')
         elif not matchPass:
@@ -90,6 +90,7 @@ def profile(username):
     user_being_viewed = User(user_being_viewed_username)
     posts = user_being_viewed.get_recent_posts()
 
+
     similar = []
     common = []
 
@@ -101,25 +102,28 @@ def profile(username):
         else:
             common = logged_in_user.get_commonality_of_user(user_being_viewed)
 
+    bio = user_being_viewed.get_bio()
+    icon = user_being_viewed.get_icon()
+
     return render_template(
         'profile.html',
         username=username,
         posts=posts,
         similar=similar,
-        common=common
+        common=common,
+        bio=bio,
+        icon=icon
     )
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     username = request.form['username']
-	
-    results = search_users(username) 
-	
+
+    results = search_users(username)
+
     return render_template(
 	    'search_results.html',
         results=results,
 		username=username
     )
 	#include profile picture here when it comes out
-
-
