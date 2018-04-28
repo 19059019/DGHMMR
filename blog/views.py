@@ -154,10 +154,8 @@ def edit_profile(username):
         elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
             flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
         elif not icon.save(os.path.join(ICON_FOLDER, icon_name)):
-            print("before insertion")
             update_profile(username, bio, icon_name,password)
-            print("After insertion")
-            return render_template(url_for('profile', username=username))
+            return profile(username)
         else:
             flash("file upload failure")
 
