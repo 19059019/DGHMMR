@@ -1,8 +1,13 @@
-from .models import User, get_todays_recent_posts, search_users
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile
+from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
+import os
+from werkzeug import secure_filename
 
 app = Flask(__name__)
+
+ICON_FOLDER = 'blog/static/icons/'
 
 @app.route('/')
 def index():
@@ -14,10 +19,10 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
+
         matchUser = re.match(r"^([A-Z][A-Za-z0-9].{3,13})$", username, flags=0)
         matchPass = re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", password, flags=0)
-        
+
         if not matchUser:
             flash('Your username must start with a capital and consist of only letters and digits')
         elif not matchPass:
@@ -90,6 +95,7 @@ def profile(username):
     user_being_viewed = User(user_being_viewed_username)
     posts = user_being_viewed.get_recent_posts()
 
+
     similar = []
     common = []
 
@@ -101,25 +107,59 @@ def profile(username):
         else:
             common = logged_in_user.get_commonality_of_user(user_being_viewed)
 
+    bio = user_being_viewed.get_bio()
+    icon = user_being_viewed.get_icon()
+
     return render_template(
         'profile.html',
         username=username,
         posts=posts,
         similar=similar,
-        common=common
+        common=common,
+        bio=bio,
+        icon=icon
     )
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     username = request.form['username']
-	
-    results = search_users(username) 
-	
+
+    results = search_users(username)
+
     return render_template(
 	    'search_results.html',
         results=results,
 		username=username
     )
-	#include profile picture here when it comes out
+    # TODO
+	#include profile picture here when it comes out (NODES now have icons attatched as .icon)
 
+@app.route('/profile/<username>/edit', methods=['GET','POST'])
+def edit_profile(username):
+    user = User(username)
+    if request.method == 'POST':
+        icon = request.files['icon']
+        bio = request.form['bio']
+        pass_old = request.form['pass_old']
+        pass_new = request.form['pass_new']
+        pass_new_confirm = request.form['pass_new_confirm']
+        icon_name = secure_filename(icon.filename)
+        password = bcrypt.encrypt(pass_new)
+        if not valid_file(icon.filename):
+            flash('File name not accepted')
+        elif not user.verify_password(pass_old):
+            flash('Incorrect Password')
+        elif pass_new_confirm != pass_new:
+            flash("New Passwords don't match")
+        elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
+            flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
+        elif not icon.save(os.path.join(ICON_FOLDER, icon_name)):
+            update_profile(username, bio, icon_name,password)
+            return profile(username)
+        else:
+            flash("file upload failure")
 
+    return render_template('edit_profile.html',
+    username=username,
+    bio=user.get_bio(),
+    icon=user.get_icon())

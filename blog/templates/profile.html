@@ -2,9 +2,24 @@
 {% block body %}
 
 <h2>{{ username }}'s profile</h2>
-
+<p>
+  {%for b in bio%}
+  <h3>Bio:</h3>
+  {{b.bio}}
+  {%endfor%}
+  {%for i in icon%}
+  <br>
+  <br>
+  <br>
+  <img src="/static/icons/{{i.icon}}" alt="{{i.icon}}" style="max-width:50%;">
+  {%endfor%}
+</p>
+<br>
+<br>
+<br>
 {% if session.username %}
     {% if session.username == username %}
+    <a href="{{ url_for('edit_profile', username=username)}}">Edit Profile</a>
         <h3>Users similar to you:</h3>
 
           {% for user in similar %}
