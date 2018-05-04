@@ -32,4 +32,9 @@
 <h3>Today's Recent Posts</h3>
 {% include "display_posts.html" %}
 
+
+<form action="{{ url_for('questions') }}" method="post">
+    <input type="submit" value="Questions">
+</form>
+
 {% endblock %}

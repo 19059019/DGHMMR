@@ -1,0 +1,12 @@
+  <ul class="questions">
+  {% for row in questions %}
+    <li>
+    	<b>{{ row.question.title }}</b>
+    	by <a href="{{ url_for('profile', username=row.username) }}">{{ row.username }}</a>
+    	on {{ row.question.date }}
+    	<br>
+    	{{ row.question.text }}
+        {% else %}
+          <li>There aren't any questions yet!
+  {% endfor %}
+  </ul>

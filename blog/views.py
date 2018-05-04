@@ -1,4 +1,5 @@
 from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile
+from .models import get_questions
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -63,7 +64,7 @@ def add_post():
     tags = request.form['tags']
     text = request.form['text']
 
-    if not title:
+    if not title:   
         flash('You must give your post a title.')
     elif not tags:
         flash('You must give your post at least one tag.')
@@ -73,6 +74,23 @@ def add_post():
         User(session['username']).add_post(title, tags, text)
 
     return redirect(url_for('index'))
+
+@app.route('/add_question', methods=['POST'])
+def add_question():
+    title = request.form['title']
+    #tags = request.form['tags']
+    text = request.form['text']
+
+    if not title:
+        flash('You must give your post a title.')
+    #elif not tags:
+    #    flash('You must give your post at least one tag.')
+    elif not text:
+        flash('You must give your post a text body.')
+    else:
+        User(session['username']).add_question(title, text)
+
+    return redirect(url_for('questions'))
 
 @app.route('/like_post/<post_id>')
 def like_post(post_id):
@@ -163,3 +181,22 @@ def edit_profile(username):
     username=username,
     bio=user.get_bio(),
     icon=user.get_icon())
+
+@app.route('/questions', methods=['GET', 'POST'])
+def questions():
+    questions = get_questions()
+    return render_template('questions.html', questions=questions)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

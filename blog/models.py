@@ -55,6 +55,23 @@ class User:
 
             rel = Relationship(tag, 'TAGGED', post)
             graph.create(rel)
+            
+    def add_question(self, title, text):
+        # find the user in the database
+        user = self.find()
+        # make a new question node with the question details
+        question = Node(
+            'Question',
+            id=str(uuid.uuid4()),
+            title=title,
+            text=text,
+            timestamp=timestamp(),
+            date=date()
+        )
+        # create a relationship between user who asked question and the question
+        rel = Relationship(user, 'ASKED', question)
+        graph.create(rel)
+
 
     def like_post(self, post_id):
         user = self.find()
@@ -163,3 +180,11 @@ def timestamp():
 
 def date():
     return datetime.now().strftime('%Y-%m-%d')
+
+def get_questions():
+        query = '''
+        MATCH (user:User)-[:ASKED]->(question:Question)
+        RETURN user.username AS username, question
+        '''
+
+        return graph.run(query)
