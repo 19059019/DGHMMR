@@ -92,7 +92,7 @@ def bookmark_post(post_id):
     username = session.get('username')
 
     if not username:
-        flash('You must be logged in to like a post.')
+        flash('You must be logged in to bookmark a post.')
         return redirect(url_for('login'))
 
     User(username).bookmark_post(post_id)
@@ -100,6 +100,17 @@ def bookmark_post(post_id):
     flash('Bookmarked post.')
     return redirect(request.referrer)
 
+@app.route('/follow_user/<user_name>')
+def follow_user(user_name):
+	username = session.get('username')
+
+	if not username:
+		flash('You must be logged in to follow someone.')
+
+	User(username).follow_user(user_name)
+
+	flash('following')
+	return redirect(request.referrer)
 
 @app.route('/profile/<username>')
 def profile(username):

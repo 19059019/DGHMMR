@@ -70,10 +70,17 @@ class User:
         graph.run(query, post_id=post_id)
 
     def bookmark_post(self, post_id):
-    	user = self.find()
-    	post = graph.find_one('Post', 'id', post_id)
-    	rel = Relationship(user, 'BOOKMARK', post)
-    	graph.create(rel)
+        user = self.find()
+        post = graph.find_one('Post', 'id', post_id)
+        rel = Relationship(user, 'BOOKMARK', post)
+        graph.create(rel)
+
+    def follow_user(self, user_name):
+        user_following = self.find()
+        user_followed = graph.find_one('User', 'username', user_name)
+        rel = Relationship(user_following, 'FOLLOW', user_followed)
+        graph.create(rel)
+
 
     def get_recent_posts(self):
         query = '''
@@ -82,7 +89,6 @@ class User:
         RETURN post, COLLECT(tag.name) AS tags
         ORDER BY post.timestamp DESC LIMIT 5
         '''
-
         return graph.run(query, username=self.username)
 
     def get_similar_users(self):
