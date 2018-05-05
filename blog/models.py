@@ -74,6 +74,7 @@ class User:
     def get_similar_users(self):
         # Find three users who are most similar to the logged-in user
         # based on tags they've both blogged about.
+
         query = '''
         MATCH (you:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
               (they:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
@@ -81,6 +82,21 @@ class User:
         WITH they, COLLECT(DISTINCT tag.name) AS tags
         ORDER BY SIZE(tags) DESC LIMIT 3
         RETURN they.username AS similar_user, tags
+        '''
+
+        return graph.run(query, username=self.username)
+
+    def get_suggested_users(self):
+        # Gets suggested users to the logged-in user based on follows
+        # and ordered by upvotes
+        # TODO update query after Hendri is done with his section
+        query = '''
+        MATCH (you:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
+              (they:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
+        WHERE you.username = {username} AND you <> they
+        WITH they, COLLECT(DISTINCT tag.name) AS tags
+        ORDER BY SIZE(tags) DESC LIMIT 10
+        RETURN they.username AS suggested_user
         '''
 
         return graph.run(query, username=self.username)

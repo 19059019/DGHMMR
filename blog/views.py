@@ -95,7 +95,6 @@ def profile(username):
     user_being_viewed = User(user_being_viewed_username)
     posts = user_being_viewed.get_recent_posts()
 
-
     similar = []
     common = []
 
@@ -133,6 +132,16 @@ def search():
     )
     # TODO
 	#include profile picture here when it comes out (NODES now have icons attatched as .icon)
+
+@app.route('/suggested_users/<username>', methods=['GET', 'POST'])
+def suggested_users(username):
+    logged_in_user = User(username)
+    suggested = logged_in_user.get_suggested_users()
+
+    return render_template(
+	    'suggested_users.html',
+        suggested=suggested
+    )
 
 @app.route('/profile/<username>/edit', methods=['GET','POST'])
 def edit_profile(username):
