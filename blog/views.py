@@ -87,6 +87,20 @@ def like_post(post_id):
     flash('Liked post.')
     return redirect(request.referrer)
 
+@app.route('/bookmark_post/<post_id>')
+def bookmark_post(post_id):
+    username = session.get('username')
+
+    if not username:
+        flash('You must be logged in to like a post.')
+        return redirect(url_for('login'))
+
+    User(username).bookmark_post(post_id)
+
+    flash('Bookmarked post.')
+    return redirect(request.referrer)
+
+
 @app.route('/profile/<username>')
 def profile(username):
     logged_in_username = session.get('username')

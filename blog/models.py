@@ -61,6 +61,12 @@ class User:
         post = graph.find_one('Post', 'id', post_id)
         graph.merge(Relationship(user, 'LIKED', post))
 
+    def bookmark_post(self, post_id):
+    	user = self.find()
+    	post = graph.find_one('Post', 'id', post_id)
+    	rel = Relationship(user, 'BOOKMARK', post)
+    	graph.create(rel)
+
     def get_recent_posts(self):
         query = '''
         MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)
