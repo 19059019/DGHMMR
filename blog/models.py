@@ -43,7 +43,8 @@ class User:
             title=title,
             text=text,
             timestamp=timestamp(),
-            date=date()
+            date=date(),
+            likes=0
         )
         rel = Relationship(user, 'PUBLISHED', post)
         graph.create(rel)
@@ -59,7 +60,14 @@ class User:
     def like_post(self, post_id):
         user = self.find()
         post = graph.find_one('Post', 'id', post_id)
-        graph.merge(Relationship(user, 'LIKED', post))
+        rel = Relationship(user, 'LIKED', post)
+        graph.merge(rel)
+        query = '''
+        MATCH (post:Post)
+        WHERE post.id = {post_id}
+        SET post.likes = post.likes + 1
+        '''
+        graph.run(query, post_id=post_id)
 
     def bookmark_post(self, post_id):
     	user = self.find()
