@@ -6,6 +6,21 @@
     	on {{ row.question.date }}
     	<br>
     	{{ row.question.text }}
+        
+        {% if session.username %}
+        <h3>Add New Answer</h3>
+        <form action="{{ url_for('add_answer') }}" method="post">
+            <dl>
+                <dt>Text:</dt>
+                <dd><textarea name="text" rows="5" cols="40"></textarea></dd>
+            </dl>
+            <input type="hidden" name="questionID" value="{{ row.question.id }}">
+            <input type="submit" value="Answer">
+        </form>
+        {% endif %}
+        
+        {% include "display_answers.html" %}
+        
         {% else %}
           <li>There aren't any questions yet!
   {% endfor %}

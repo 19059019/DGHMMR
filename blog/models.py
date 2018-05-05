@@ -71,6 +71,30 @@ class User:
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ASKED', question)
         graph.create(rel)
+        
+    def add_answer(self, questionID, text):
+        # find the user in the database
+        user = self.find()
+        
+        # make a new answer node with the answer details
+        answer = Node(
+            'Answer',
+            id=str(uuid.uuid4()),
+            text=text,
+            timestamp=timestamp(),
+            date=date()
+        )
+        
+        # get the question node that the answer is for
+        question = graph.find_one('Question', 'id', questionID)
+        
+        # create a relationship between user who asked question and the question
+        rel = Relationship(user, 'ANSWERED', answer)
+        graph.create(rel)
+        
+        # create a relationship between question and answer to question
+        rel = Relationship(answer, 'ANSWERED_TO', question)
+        graph.create(rel)
 
 
     def like_post(self, post_id):
@@ -182,9 +206,22 @@ def date():
     return datetime.now().strftime('%Y-%m-%d')
 
 def get_questions():
-        query = '''
-        MATCH (user:User)-[:ASKED]->(question:Question)
-        RETURN user.username AS username, question
-        '''
+    query = '''
+    MATCH (user:User)-[:ASKED]->(question:Question)
+    RETURN user.username AS username, question
+    '''
 
-        return graph.run(query)
+    return graph.run(query)
+
+"""
+def get_answers():
+    query = '''
+    MATCH (user:User)-[:ASKED]->(question:Question)
+    RETURN user.username AS username, question
+    '''
+
+    return graph.run(query, questionID=)
+
+"""
+    
+    

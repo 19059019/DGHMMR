@@ -82,13 +82,26 @@ def add_question():
     text = request.form['text']
 
     if not title:
-        flash('You must give your post a title.')
+        flash('You must give your question a title.')
     #elif not tags:
     #    flash('You must give your post at least one tag.')
     elif not text:
-        flash('You must give your post a text body.')
+        flash('You must give your question a text body.')
     else:
         User(session['username']).add_question(title, text)
+
+    return redirect(url_for('questions'))
+
+@app.route('/add_answer', methods=['POST'])
+def add_answer():
+    text = request.form['text']
+    questionID = request.form['questionID']
+
+    if not text:
+        flash('You must give your answer a text body.')
+    else:
+        pass
+        User(session['username']).add_answer(questionID, text)
 
     return redirect(url_for('questions'))
 
