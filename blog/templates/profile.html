@@ -2,7 +2,12 @@
 {% block body %}
 
 <h2>{{ username }}'s profile</h2>
-<p>
+
+{% if session.username != username %}
+ <a href="{{ url_for('follow_user', user_name=username)}}">follow</a>
+{%endif%}
+<br>
+<p>    
   {%for b in bio%}
   <h3>Bio:</h3>
   {{b.bio}}
@@ -14,6 +19,7 @@
   <img src="/static/icons/{{i.icon}}" alt="{{i.icon}}" style="max-width:50%;">
   {%endfor%}
 </p>
+
 <br>
 <br>
 <br>
