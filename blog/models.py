@@ -140,19 +140,28 @@ def valid_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ICON_EXTENSIONS
 
-def update_profile(username, bio, icon_name,password):
+def update_profile(username, bio, password):
     query = """
     MATCH (n:User)
     WHERE n.username = {username}
     SET n.bio = {bio}
-    SET n.icon = {icon_name}
     SET n.password = {password}
     """
     graph.run(query,
     username=username,
     bio=bio,
-    icon_name=icon_name,
     password=password
+    )
+
+def update_icon(username, icon):
+    query = """
+    MATCH (n:User)
+    WHERE n.username = {username}
+    SET n.icon = {icon}
+    """
+    graph.run(query,
+    username=username,
+    icon=icon
     )
 
 def timestamp():
