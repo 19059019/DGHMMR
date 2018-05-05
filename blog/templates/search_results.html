@@ -5,6 +5,7 @@
 
 {% for user in results %}
     <p>
+        <img src="/static/icons/{{ user.result_icon }}" alt="{{ user.result_icon }}" style="max-width:10%;" align="middle">
         <a href="{{ url_for('profile', username=user.result_user) }}">{{ user.result_user }} </a>
     </p>
 {% else %}

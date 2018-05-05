@@ -122,16 +122,13 @@ def profile(username):
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     username = request.form['username']
-
-    results = search_users(username)
+    results = search_users(username, session.get('username'))
 
     return render_template(
 	    'search_results.html',
         results=results,
-		username=username
+		username=username,
     )
-    # TODO
-	#include profile picture here when it comes out (NODES now have icons attatched as .icon)
 
 @app.route('/suggested_users/<username>', methods=['GET', 'POST'])
 def suggested_users(username):

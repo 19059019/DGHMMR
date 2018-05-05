@@ -141,16 +141,16 @@ def get_todays_recent_posts():
 
     return graph.run(query, today=date())
 
-def search_users(username):
+def search_users(username, logged_in_user):
     regex = "'(?i)^.*" + username + ".*$'"
 
     query = '''
     MATCH (n:User)
-    WHERE n.username =~ ''' + regex + '''
-    RETURN n.username AS result_user
+    WHERE n.username =~ ''' + regex + ''' AND n.username <> {curr_user}
+    RETURN n.username AS result_user, n.icon AS result_icon
     '''
 
-    return graph.run(query, regex=regex)
+    return graph.run(query, curr_user=logged_in_user)
 
 def valid_file(filename):
     return '.' in filename and \
