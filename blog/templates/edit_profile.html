@@ -1,15 +1,18 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h2>Edit {{ username }}'s profile:'</h2>
+{% if session.username == username %}
+<h2>Edit {{ username }}'s profile:</h2>
   <form method="post" enctype="multipart/form-data">
-    <h3>Bio:</h3><br><br>
+    <a href="{{ url_for('change_icon', username=username)}}">Change Icon</a>
+    <h3>Bio:</h3><br>
     {% for b in bio %}
     <textarea class="scrollabletextbox" name="bio">{{b.bio}}</textarea>
     {% endfor %}
-    <h3>Icon:</h3><br><br>
-    <input type="file" name="icon" required>
-    <h3>Password:</h3><br><br>
+    <h3>Password:</h3>
+    <p>
+      If you do not wish to change your Password, then please leave the new password fields empty.
+    </p>
     <table>
       <dt>Old:</dt>
       <dd><input type="password" name="pass_old" required></dd>
@@ -18,7 +21,10 @@
       <dt>Confirm New:</dt>
       <dd><input type="password" name="pass_new_confirm"></dd>
     </table>
+    <br>
     <input type="submit" value="Make Changes">
   </form>
-
+{% else %}
+<h2>Invalid Login</h2>
+{% endif %}
 {% endblock %}

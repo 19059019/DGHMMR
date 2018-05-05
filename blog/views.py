@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -147,28 +147,86 @@ def suggested_users(username):
 def edit_profile(username):
     user = User(username)
     if request.method == 'POST':
-        icon = request.files['icon']
-        bio = request.form['bio']
-        pass_old = request.form['pass_old']
-        pass_new = request.form['pass_new']
-        pass_new_confirm = request.form['pass_new_confirm']
-        icon_name = secure_filename(icon.filename)
-        password = bcrypt.encrypt(pass_new)
-        if not valid_file(icon.filename):
-            flash('File name not accepted')
-        elif not user.verify_password(pass_old):
-            flash('Incorrect Password')
-        elif pass_new_confirm != pass_new:
-            flash("New Passwords don't match")
-        elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
-            flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
-        elif not icon.save(os.path.join(ICON_FOLDER, icon_name)):
-            update_profile(username, bio, icon_name,password)
-            return profile(username)
+        if 'icon' in request.files:
+            icon = request.files['icon']
+            icon_name = secure_filename(icon.filename)
+            password = request.form['pass']
+            if not valid_file(icon.filename):
+                flash('File name not accepted')
+            elif not user.verify_password(password):
+                flash('Incorrect Password')
+            elif not icon.save(os.path.join(ICON_FOLDER, icon_name)):
+                update_icon(username, icon_name)
+                return profile(username)
+            else:
+                flash("file upload failure")
         else:
-            flash("file upload failure")
+            bio = request.form['bio']
+            pass_old = request.form['pass_old']
+            pass_new = request.form['pass_new']
+            pass_new_confirm = request.form['pass_new_confirm']
+            if pass_new == "":
+                password = bcrypt.encrypt(pass_old)
+                pass_new_confirm = pass_old
+                pass_new = pass_old
+            else:
+                password = bcrypt.encrypt(pass_new)
 
+            if not user.verify_password(pass_old):
+                flash('Incorrect Password')
+            elif pass_new_confirm != pass_new:
+                flash("New Passwords don't match")
+            elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
+                flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
+            else:
+                update_profile(username, bio, password)
+                return profile(username)
     return render_template('edit_profile.html',
     username=username,
     bio=user.get_bio(),
+    icon=user.get_icon())
+
+
+
+
+@app.route('/profile/<username>/change_icon', methods=['GET','POST'])
+def change_icon(username):
+    user = User(username)
+    if request.method == 'POST':
+        if 'icon' in request.files:
+            icon = request.files['icon']
+            icon_name = secure_filename(icon.filename)
+            password = request.form['pass']
+            if not valid_file(icon.filename):
+                flash('File name not accepted')
+            elif not user.verify_password(password):
+                flash('Incorrect Password')
+            elif not icon.save(os.path.join(ICON_FOLDER, icon_name)):
+                update_icon(username, icon_name)
+                return profile(username)
+            else:
+                flash("file upload failure")
+        else:
+            bio = request.form['bio']
+            pass_old = request.form['pass_old']
+            pass_new = request.form['pass_new']
+            pass_new_confirm = request.form['pass_new_confirm']
+            if pass_new == "":
+                password = bcrypt.encrypt(pass_old)
+                pass_new_confirm = pass_old
+                pass_new = pass_old
+            else:
+                password = bcrypt.encrypt(pass_new)
+
+            if not user.verify_password(pass_old):
+                flash('Incorrect Password')
+            elif pass_new_confirm != pass_new:
+                flash("New Passwords don't match")
+            elif not re.match(r"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})$", pass_new, flags=0):
+                flash('Your new password must be longer than 8 characters and contain one or more of the following: digit, lower-case letter and upper-case letter')
+            else:
+                update_profile(username, bio, password)
+                return profile(username)
+    return render_template('change_icon.html',
+    username=username,
     icon=user.get_icon())
