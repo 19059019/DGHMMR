@@ -2,6 +2,17 @@
 {% block body %}
 
 <h2>{{ username }}'s profile</h2>
+{% if session.username != username %}
+ <a href="{{ url_for('follow_user', user_name=username)}}">follow</a> &nbsp;
+ <a href="{{ url_for('followers', username=username)}}">View {{ username }}'s followers</a>
+{%endif%}
+
+{% if session.username == username %}
+    <!--<a href="{{ url_for('followers', username=session.username) }}">View My Followers</a> -->
+    <a href="{{ url_for('followers', username=username)}}">View My Followers</a>
+{%endif%}
+<br>
+
 <p>
   {%for b in bio%}
   <h3>Bio:</h3>

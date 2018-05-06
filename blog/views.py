@@ -100,6 +100,20 @@ def bookmark_post(post_id):
     flash('Bookmarked post.')
     return redirect(request.referrer)
 
+@app.route('/follow_user/<user_name>')
+def follow_user(user_name):
+	username = session.get('username')
+
+	if not username:
+		flash('You must be logged in to follow someone.')
+
+	User(username).follow_user(user_name)
+
+	flash('following')
+	return redirect(request.referrer)
+
+
+
 @app.route('/profile/<username>')
 def profile(username):
     logged_in_username = session.get('username')
@@ -248,3 +262,12 @@ def bookmarks(username):
     posts = user.get_bookmark()
 
     return render_template('bookmarks.html', username=username, posts=posts)
+
+
+@app.route('/profile/<username>/followers', methods=['GET','POST'])
+def followers(username):
+    user = User(username)
+    user2 = user.get_followers()
+
+    return render_template('followers.html', username=username, user2 =user2)
+

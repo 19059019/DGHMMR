@@ -67,6 +67,14 @@ class User:
     	rel = Relationship(user, 'BOOKMARK', post)
     	graph.create(rel)
 
+    def follow_user(self, user_name):
+        user_following = self.find()
+        user_followed = graph.find_one('User', 'username', user_name)
+        rel = Relationship(user_following, 'FOLLOW', user_followed)
+        graph.create(rel)
+
+
+
     def get_recent_posts(self):
         query = '''
         MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)
@@ -142,6 +150,15 @@ class User:
         MATCH (user:User)-[r:BOOKMARK]->(post:Post)<-[:TAGGED]-(tag:Tag)
         WHERE user.username = {username}
         RETURN user.username AS username, post, COLLECT(tag.name) AS tags
+        '''
+
+        return graph.run(query, username=self.username)
+
+    def get_followers(self):
+        query = '''
+        MATCH (user:User)-[r:FOLLOW]->(user2:User)
+        WHERE user.username = {username}
+        RETURN user2.username AS username
         '''
 
         return graph.run(query, username=self.username)

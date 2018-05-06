@@ -5,7 +5,7 @@
 
 {% for user in results %}
     <p>
-        <a href="{{ url_for('profile', username=user.result_user) }}">{{ user.result_user }} </a>
+        <a href="{{ url_for('profile', username=user.result_user) }}">{{ user.result_user }} </a> 
     </p>
 {% else %}
     <p>There aren't any users matching {{ username }}. Try searching for a different user.</p>
