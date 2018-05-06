@@ -61,13 +61,13 @@ class User:
         user = self.find()
         post = graph.find_one('Post', 'id', post_id)
         rel = Relationship(user, 'LIKED', post)
-        graph.merge(rel)
-        query = '''
-        MATCH (post:Post)
-        WHERE post.id = {post_id}
-        SET post.likes = post.likes + 1
-        '''
-        graph.run(query, post_id=post_id)
+        if graph.create_unique(rel) > 1:
+            query = '''
+            MATCH (post:Post)
+            WHERE post.id = {post_id}
+            SET post.likes = post.likes + 1
+            '''
+            graph.run(query, post_id=post_id)
 
     def bookmark_post(self, post_id):
     	user = self.find()
