@@ -4,6 +4,7 @@
     	<b>{{ ques_row.question.title }}</b>
     	by <a href="{{ url_for('profile', username=ques_row.username) }}">{{ ques_row.username }}</a>
     	on {{ ques_row.question.date }}
+        <a href="{{ url_for('bookmark_question', question_id=ques_row.question.id) }}">Bookmark</a><br>
     	<br>
     	{{ ques_row.question.text }}
         
@@ -30,7 +31,8 @@
             
         <li>
             <b><a href="{{ url_for('profile', username=ans_row.username) }}">{{ ans_row.username }}</a></b>
-            answered on {{ ans_row.answer.date }}
+            answered on {{ ans_row.answer.date }} 
+            <a href="{{ url_for('upvote_answer', answer_id=ans_row.answer.id) }}">upvote ({{ans_row.answer.upvotes}})</a>
             <br>
             {{ ans_row.answer.text }}
 

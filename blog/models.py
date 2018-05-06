@@ -34,28 +34,6 @@ class User:
             return bcrypt.verify(password, user['password'])
         else:
             return False
-
-    def add_post(self, title, tags, text):
-        user = self.find()
-        post = Node(
-            'Post',
-            id=str(uuid.uuid4()),
-            title=title,
-            text=text,
-            timestamp=timestamp(),
-            date=date(),
-            likes=0
-        )
-        rel = Relationship(user, 'PUBLISHED', post)
-        graph.create(rel)
-
-        tags = [x.strip() for x in tags.lower().split(',')]
-        for name in set(tags):
-            tag = Node('Tag', name=name)
-            graph.merge(tag)
-
-            rel = Relationship(tag, 'TAGGED', post)
-            graph.create(rel)
             
     def add_question(self, title, text):
         # find the user in the database
@@ -83,7 +61,8 @@ class User:
             id=str(uuid.uuid4()),
             text=text,
             timestamp=timestamp(),
-            date=date()
+            date=date(),
+            upvotes=0
         )
         
         # get the question node that the answer is for
@@ -96,23 +75,23 @@ class User:
         # create a relationship between question and answer to question
         rel = Relationship(answer, 'ANSWER_TO', question)
         graph.create(rel)
-
-    def like_post(self, post_id):
+        
+    def upvote_answer(self, answer_id):
         user = self.find()
-        post = graph.find_one('Post', 'id', post_id)
-        rel = Relationship(user, 'LIKED', post)
+        answer = graph.find_one('Answer', 'id', answer_id)
+        rel = Relationship(user, 'UPVOTE', answer)
         graph.merge(rel)
         query = '''
-        MATCH (post:Post)
-        WHERE post.id = {post_id}
-        SET post.likes = post.likes + 1
+        MATCH (answer:Answer)
+        WHERE answer.id = {answer_id}
+        SET answer.upvotes = answer.upvotes + 1
         '''
-        graph.run(query, post_id=post_id)
-
-    def bookmark_post(self, post_id):
+        graph.run(query, answer_id=answer_id)
+        
+    def bookmark_question(self, question_id):
         user = self.find()
-        post = graph.find_one('Post', 'id', post_id)
-        rel = Relationship(user, 'BOOKMARK', post)
+        question = graph.find_one('Question', 'id', question_id)
+        rel = Relationship(user, 'BOOKMARK', question)
         graph.create(rel)
 
     def follow_user(self, user_name):
@@ -120,7 +99,6 @@ class User:
         user_followed = graph.find_one('User', 'username', user_name)
         rel = Relationship(user_following, 'FOLLOW', user_followed)
         graph.create(rel)
-
 
     def get_recent_posts(self):
         query = '''
