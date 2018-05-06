@@ -7,7 +7,7 @@
         {% endif %}
     	on {{ row.post.date }}
     	<a href="{{ url_for('like_post', post_id=row.post.id) }}">like</a>
-      <a href="{{ url_for('bookmark_post', post_id=row.post.id) }}">Bookmark</a><br>
+      <a href="{{ url_for('bookmark_post', post_id=row.post.id) }}">bookmark</a><br>
     	<i>{{ ", ".join(row.tags) }}</i><br>
     	{{ row.post.text }}
   {% else %}

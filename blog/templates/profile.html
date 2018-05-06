@@ -20,6 +20,7 @@
 {% if session.username %}
     {% if session.username == username %}
     <a href="{{ url_for('edit_profile', username=username)}}">Edit Profile</a>
+    <a href="{{ url_for('bookmarks', username=username)}}">View bookmarked posts</a>
         <h3>Users similar to you:</h3>
 
           {% for user in similar %}

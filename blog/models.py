@@ -137,6 +137,15 @@ class User:
 
         return graph.run(query, they=other.username, you=self.username).next
 
+    def get_bookmark(self):
+        query = '''
+        MATCH (user:User)-[r:BOOKMARK]->(post:Post)<-[:TAGGED]-(tag:Tag)
+        WHERE user.username = {username}
+        RETURN user.username AS username, post, COLLECT(tag.name) AS tags
+        '''
+
+        return graph.run(query, username=self.username)
+
 def get_todays_recent_posts():
     query = '''
     MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)

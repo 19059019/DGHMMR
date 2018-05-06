@@ -100,7 +100,6 @@ def bookmark_post(post_id):
     flash('Bookmarked post.')
     return redirect(request.referrer)
 
-
 @app.route('/profile/<username>')
 def profile(username):
     logged_in_username = session.get('username')
@@ -200,9 +199,6 @@ def edit_profile(username):
     bio=user.get_bio(),
     icon=user.get_icon())
 
-
-
-
 @app.route('/profile/<username>/change_icon', methods=['GET','POST'])
 def change_icon(username):
     user = User(username)
@@ -224,6 +220,7 @@ def change_icon(username):
             bio = request.form['bio']
             pass_old = request.form['pass_old']
             pass_new = request.form['pass_new']
+
             pass_new_confirm = request.form['pass_new_confirm']
             if pass_new == "":
                 password = bcrypt.encrypt(pass_old)
@@ -244,3 +241,10 @@ def change_icon(username):
     return render_template('change_icon.html',
     username=username,
     icon=user.get_icon())
+
+@app.route('/profile/<username>/bookmarks', methods=['GET','POST'])
+def bookmarks(username):
+    user = User(username)
+    posts = user.get_bookmark()
+
+    return render_template('bookmarks.html', username=username, posts=posts)
