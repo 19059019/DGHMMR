@@ -240,3 +240,11 @@ def get_answers():
     RETURN a AS answer, ID(q) as questionID, u.username AS username
     '''
     return graph.run(query)
+
+def get_followed_questions(username):
+    query = '''
+    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question) 
+    WHERE you.username = "Adam1" 
+    RETURN question, COLLECT(DISTINCT question)
+    '''
+    return graph.run(query, username=username)

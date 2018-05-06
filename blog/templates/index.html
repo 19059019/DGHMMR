@@ -14,8 +14,16 @@
 
 <br>
 
+{% if session.username %}
+<form action="{{ url_for('followed_questions') }}" method="post">
+    <input type="submit" value="Followed user's questions">
+</form>
+{% endif %}
+
 <form action="{{ url_for('questions') }}" method="post">
     <input type="submit" value="Questions">
 </form>
+
+
 
 {% endblock %}

@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -271,4 +271,9 @@ def change_icon(username):
 @app.route('/questions', methods=['GET', 'POST'])
 def questions():
     questions = get_questions()
+    return render_template('questions.html', questions=questions)
+
+@app.route('/followed_questions', methods=['GET', 'POST'])
+def followed_questions():
+    questions = get_followed_questions(session['username'])
     return render_template('questions.html', questions=questions)
