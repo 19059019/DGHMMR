@@ -1,12 +1,13 @@
-  <ul class="answers">
-  {% for row in answers %}
-    <li>
-    	<b><a href="{{ url_for('profile', username=row.username) }}">{{ row.username }}</a></b>
-    	answered on {{ row.answer.date }}
-    	<br>
-    	{{ row.answer.text }}
-        
-        {% else %}
-          <li>There aren't any answers yet!
-  {% endfor %}
-  </ul>
+<ul class="answers">
+{% for row in answers %}
+<li>
+    {{ row.questionID }}
+    <b><a href="{{ url_for('profile', username=row.username) }}">{{ row.username }}</a></b>
+    answered on {{ row.answer.date }}
+    <br>
+    {{ row.answer.text }}
+
+    {% else %}
+      <li>There aren't any answers yet!
+{% endfor %}
+</ul>

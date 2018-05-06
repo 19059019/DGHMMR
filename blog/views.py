@@ -1,5 +1,5 @@
 from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile
-from .models import get_questions
+from .models import get_questions, get_answers
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -200,14 +200,7 @@ def questions():
     questions = get_questions()
     return render_template('questions.html', questions=questions)
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     

@@ -93,7 +93,7 @@ class User:
         graph.create(rel)
         
         # create a relationship between question and answer to question
-        rel = Relationship(answer, 'ANSWERED_TO', question)
+        rel = Relationship(answer, 'ANSWER_TO', question)
         graph.create(rel)
 
 
@@ -208,20 +208,18 @@ def date():
 def get_questions():
     query = '''
     MATCH (user:User)-[:ASKED]->(question:Question)
-    RETURN user.username AS username, question
+    RETURN user.username AS username, question, ID(question) AS num
     '''
 
     return graph.run(query)
 
-"""
 def get_answers():
     query = '''
-    MATCH (user:User)-[:ASKED]->(question:Question)
-    RETURN user.username AS username, question
+    MATCH (u:User)-[:ANSWERED]->(a:Answer)-[:ANSWER_TO]->(q:Question)
+    RETURN a AS answer, ID(q) as questionID, u.username AS username
     '''
 
-    return graph.run(query, questionID=)
+    return graph.run(query)
 
-"""
     
     
