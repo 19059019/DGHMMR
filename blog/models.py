@@ -56,6 +56,46 @@ class User:
 
             rel = Relationship(tag, 'TAGGED', post)
             graph.create(rel)
+            
+    def add_question(self, title, text):
+        # find the user in the database
+        user = self.find()
+        # make a new question node with the question details
+        question = Node(
+            'Question',
+            id=str(uuid.uuid4()),
+            title=title,
+            text=text,
+            timestamp=timestamp(),
+            date=date()
+        )
+        # create a relationship between user who asked question and the question
+        rel = Relationship(user, 'ASKED', question)
+        graph.create(rel)
+        
+    def add_answer(self, questionID, text):
+        # find the user in the database
+        user = self.find()
+        
+        # make a new answer node with the answer details
+        answer = Node(
+            'Answer',
+            id=str(uuid.uuid4()),
+            text=text,
+            timestamp=timestamp(),
+            date=date()
+        )
+        
+        # get the question node that the answer is for
+        question = graph.find_one('Question', 'id', questionID)
+        
+        # create a relationship between user who asked question and the question
+        rel = Relationship(user, 'ANSWERED', answer)
+        graph.create(rel)
+        
+        # create a relationship between question and answer to question
+        rel = Relationship(answer, 'ANSWER_TO', question)
+        graph.create(rel)
 
     def like_post(self, post_id):
         user = self.find()
@@ -208,3 +248,17 @@ def timestamp():
 
 def date():
     return datetime.now().strftime('%Y-%m-%d')
+
+def get_questions():
+    query = '''
+    MATCH (user:User)-[:ASKED]->(question:Question)
+    RETURN user.username AS username, question, ID(question) AS num
+    '''
+    return graph.run(query)
+
+def get_answers():
+    query = '''
+    MATCH (u:User)-[:ANSWERED]->(a:Answer)-[:ANSWER_TO]->(q:Question)
+    RETURN a AS answer, ID(q) as questionID, u.username AS username
+    '''
+    return graph.run(query)

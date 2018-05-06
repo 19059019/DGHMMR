@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  {% if session.username %}
+    <h3>Ask New Question</h3>
+    <form action="{{ url_for('add_question') }}" method="post">
+        <dl>
+            <dt>Title:</dt>
+            <dd><input type="text" size="30" name="title"></dd>
+            <!-- 
+            <dt>Tags (separated by commas):</dt>
+            <dd><input type="text" size="30" name="tags"></dd>
+            -->
+            <dt>Text:</dt>
+            <dd><textarea name="text" rows="5" cols="40"></textarea></dd>
+        </dl>
+        <input type="submit" value="Ask">
+    </form>
+  {% endif %}
+
+
+{% include "display_questions.html" %}
+
+
+{% endblock %}
