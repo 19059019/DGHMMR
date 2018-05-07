@@ -5,7 +5,9 @@
 
     {% for user in suggested %}
         <p>
-        <a href="{{ url_for('profile', username=user.suggested_user) }}">{{ user.suggested_user }}</a>
+            <img src="/static/icons/{{ user.suggested_icon }}" alt="{{ user.suggested_icon }}" style="max-width:10%;" align="middle">
+            <a href="{{ url_for('profile', username=user.suggested_user) }}">{{ user.suggested_user }}</a>
+        </p>
     {% endfor %}
 
 {% endblock %}
