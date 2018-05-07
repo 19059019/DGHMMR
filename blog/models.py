@@ -35,11 +35,7 @@ class User:
         else:
             return False
 
-
-    def add_question(self, title, text, topics):
-        print("Adding Question")
-
-    def add_question(self, title, text):
+    def add_question(self, title, text,topics):
 
         # find the user in the database
         user = self.find()
@@ -63,7 +59,6 @@ class User:
             print(node);
             relationship = Relationship(node,'TAGGED',question)
             graph.create(relationship)
-70
 
     def add_answer(self, questionID, text):
         # find the user in the database

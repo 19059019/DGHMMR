@@ -1,8 +1,5 @@
-<<<<<<< HEAD
+
 from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_topics, init_topics
-=======
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_followed_answers
->>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -83,10 +80,6 @@ def add_question():
         print(key)
         if key in tags :
              topics.append(key)
-             print("APPEND")
-
-
-
 
     if not title:
         flash('You must give your question a title.')
