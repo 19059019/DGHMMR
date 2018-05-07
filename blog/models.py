@@ -262,8 +262,17 @@ def get_answers():
 def get_followed_questions(username):
     query = '''
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question) 
-    WHERE you.username = "Adam1" 
+    WHERE you.username = {username}
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
+    '''
+    return graph.run(query, username=username)
+
+def get_followed_answers(username):
+    query = '''
+    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question) 
+    WHERE me.username= {username}
+    RETURN answer, q.title AS question_title, they AS answerer 
+    ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)

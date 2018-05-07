@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_followed_answers
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -286,3 +286,8 @@ def questions():
 def followed_questions():
     questions = get_followed_questions(session['username'])
     return render_template('questions.html', questions=questions)
+
+@app.route('/followed_answers', methods=['GET', 'POST'])
+def followed_answers():
+    answers = get_followed_answers(session['username'])
+    return render_template('see_followed_answers.html', answers=answers)
