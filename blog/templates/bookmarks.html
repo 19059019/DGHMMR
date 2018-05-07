@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% if session.username == username %}
+
+<h2> {{ username }}'s bookmarks </h2>
+    {% for row in posts %}
+    <p>
+    {{ row.post.title }}
+    on {{ row.post.date }}
+    <a href="{{ url_for('like_post', post_id=row.post.id) }}">like</a><br>
+    <i>{{ ", ".join(row.tags) }}</i><br>
+    {{ row.post.text }}
+    </p>
+    {% endfor %}
+
+{% endif %}
+
+{% endblock %}
