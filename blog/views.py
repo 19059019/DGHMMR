@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_topics, init_topics
+=======
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_followed_answers
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -109,6 +113,22 @@ def add_answer():
         User(session['username']).add_answer(questionID, text)
 
     return redirect(url_for('questions'))
+
+@app.route('/add_bookmark_answer', methods=['POST'])
+def add_bookmark_answer():
+    text = request.form['text']
+    questionID = request.form['questionID']
+
+    if not text:
+        flash('You must give your answer a text body.')
+    else:
+        pass
+        User(session['username']).add_answer(questionID, text)
+
+    questions = User(session['username']).get_bookmarked_questions()
+    answers = get_answers()
+
+    return render_template('bookmarks.html', questions=questions, answers=answers)
 
 @app.route('/upvote_answer/<answer_id>')
 def upvote_answer(answer_id):
@@ -290,9 +310,10 @@ def change_icon(username):
 @app.route('/profile/<username>/bookmarks', methods=['GET','POST'])
 def bookmarks(username):
     user = User(username)
-    posts = user.get_bookmark()
+    questions = user.get_bookmarked_questions()
+    answers = get_answers()
 
-    return render_template('bookmarks.html', username=username, posts=posts)
+    return render_template('bookmarks.html', username=username, questions=questions, answers=answers)
 
 @app.route('/profile/<username>/followers', methods=['GET','POST'])
 def followers(username):
@@ -312,6 +333,7 @@ def followed_questions():
     questions = get_followed_questions(session['username'])
     return render_template('questions.html', questions=questions)
 
+<<<<<<< HEAD
 @app.route('/follow_topics', methods=['GET', 'POST'])
 def follow_topics():
     topics = get_topics()
@@ -329,3 +351,9 @@ def follow_topic(TOPIC):
 
     flash('following')
     return redirect(request.referrer)
+=======
+@app.route('/followed_answers', methods=['GET', 'POST'])
+def followed_answers():
+    answers = get_followed_answers(session['username'])
+    return render_template('see_followed_answers.html', answers=answers)
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70

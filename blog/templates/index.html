@@ -14,8 +14,6 @@
         <input type="submit" value="Search">
     </form>
 
-   
-
   {% endif %}
 
 <br>
@@ -30,5 +28,10 @@
     <input type="submit" value="Questions">
 </form>
 
+{% if session.username %}
+<form action="{{ url_for('followed_answers') }}" method="post">
+    <input type="submit" value="Point 10">
+</form>
+{% endif %}
 
 {% endblock %}

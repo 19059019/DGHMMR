@@ -35,8 +35,12 @@ class User:
         else:
             return False
 
+<<<<<<< HEAD
     def add_question(self, title, text, topics):
         print("Adding Question")
+=======
+    def add_question(self, title, text):
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
         # find the user in the database
         user = self.find()
         # make a new question node with the question details
@@ -51,6 +55,7 @@ class User:
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ASKED', question)
         graph.create(rel)
+<<<<<<< HEAD
         # Create a relationship between the tags and and the question
         for topic in topics :
             print(topic)
@@ -58,6 +63,8 @@ class User:
             print(node);
             relationship = Relationship(node,'TAGGED',question)
             graph.create(relationship)
+=======
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
 
     def add_answer(self, questionID, text):
         # find the user in the database
@@ -90,11 +97,20 @@ class User:
         rel = Relationship(user, 'UPVOTE', answer)
         graph.merge(rel)
         query = '''
+        MATCH (u:User)-[r:UPVOTE]->(a:Answer)
+        WHERE a.id = {answer_id}
+        RETURN count(u)'''
+        query1 = '''
         MATCH (answer:Answer)
         WHERE answer.id = {answer_id}
-        SET answer.upvotes = answer.upvotes + 1
+        SET answer.upvotes = {upvotes}
         '''
+<<<<<<< HEAD
         graph.run(query, answer_id=answer_id)
+=======
+        upvotes = graph.evaluate(query, answer_id=answer_id)
+        graph.run(query1, answer_id=answer_id, upvotes=upvotes)
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
 
     def bookmark_question(self, question_id):
         user = self.find()
@@ -144,14 +160,13 @@ class User:
     def get_suggested_users(self):
         # Gets suggested users to the logged-in user based on follows
         # and ordered by upvotes
-        # TODO update query after Hendri is done with his section
+
         query = '''
-        MATCH (you:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
-              (they:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
+        MATCH (you:User)-[:FOLLOW]->(user:User),
+        (user)-[:FOLLOW]->(they:User)
         WHERE you.username = {username} AND you <> they
-        WITH they, COLLECT(DISTINCT tag.name) AS tags
-        ORDER BY SIZE(tags) DESC LIMIT 10
-        RETURN they.username AS suggested_user
+        RETURN they.username AS suggested_user, they.icon AS suggested_icon
+        ORDER BY SIZE((they)-[:ANSWERED]->(:Question)<-[:UPVOTE]-(:User)) DESC LIMIT 10
         '''
 
         return graph.run(query, username=self.username)
@@ -186,13 +201,12 @@ class User:
 
         return graph.run(query, they=other.username, you=self.username).next
 
-    def get_bookmark(self):
+    def get_bookmarked_questions(self):
         query = '''
-        MATCH (user:User)-[r:BOOKMARK]->(post:Post)<-[:TAGGED]-(tag:Tag)
+        MATCH (user:User)-[:BOOKMARK]->(question:Question)
         WHERE user.username = {username}
-        RETURN user.username AS username, post, COLLECT(tag.name) AS tags
+        RETURN user.username AS username, question, ID(question) AS num
         '''
-
         return graph.run(query, username=self.username)
 
     def get_followers(self):
@@ -288,12 +302,21 @@ def get_answers():
 def get_followed_questions(username):
     query = '''
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
+<<<<<<< HEAD
     WHERE you.username = "Adam1"
+=======
+<<<<<<< HEAD
+    WHERE you.username = {username}
+=======
+    WHERE you.username = "Adam1"
+>>>>>>> bookmark_qa
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
     '''
     return graph.run(query, username=username)
 
+<<<<<<< HEAD
 def get_topics():
     topicFiles = 'blog/tags.txt'
     with open(topicFiles) as file_object:
@@ -311,3 +334,13 @@ def init_topics():
             topic = topic.strip()
             tag = Node('Tag', tag=topic)
             graph.create(tag)
+=======
+def get_followed_answers(username):
+    query = '''
+    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question)
+    WHERE me.username= {username}
+    RETURN answer, q.title AS question_title, they AS answerer
+    ORDER BY answer.upvotes DESC
+    '''
+    return graph.run(query, username=username)
+>>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
