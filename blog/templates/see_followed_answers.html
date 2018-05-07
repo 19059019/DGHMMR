@@ -13,6 +13,9 @@
         <a href="{{ url_for('upvote_answer', answer_id=ans_row.answer.id) }}">upvote ({{ans_row.answer.upvotes}})</a>
         <br>
         {{ ans_row.answer.text }}
+        
+        {% else %}
+          <li>There aren't any answers to questions you follow yet!
 
     {% endfor %}
     </ul>
