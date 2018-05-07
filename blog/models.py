@@ -118,14 +118,23 @@ class User:
         rel = Relationship(user_following, 'FOLLOW', user_followed)
         graph.create(rel)
 
+    def unfollow_user(self, user_name):
+        user1 = self.username
+        user2 = graph.find_one('User', 'username', user_name)
+        #rel = Relationship(user1,
+        query = '''
+        MATCH (a:User)-[r:FOLLOW]->(b:User)
+        WHERE a.username = {us1} AND b.username = {us2}
+        DELETE r
+        '''
+        return graph.run(query, us1=user1, us2=user_name)
+
     def follow_topic(self, topic):
         print(topic)
         user_following = self.find()
         topic_followed = graph.find_one('Tag', 'tag', topic)
         rel = Relationship(user_following, 'FOLLOW', topic_followed)
         graph.create(rel)
-
-
 
     def get_recent_posts(self):
         query = '''
@@ -296,9 +305,7 @@ def get_answers():
 def get_followed_questions(username):
     query = '''
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
-    WHERE you.username = "Adam1"
     WHERE you.username = {username}
-    WHERE you.username = "Adam1"
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
     '''
@@ -330,4 +337,4 @@ def get_followed_answers(username):
     ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)
-0
+

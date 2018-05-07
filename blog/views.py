@@ -1,5 +1,4 @@
-
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_topics, init_topics
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_followed_answers, get_topics, init_topics
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -151,15 +150,33 @@ def bookmark_question(question_id):
 
 @app.route('/follow_user/<user_name>')
 def follow_user(user_name):
-	username = session.get('username')
+    username = session.get('username')
 
-	if not username:
-		flash('You must be logged in to follow someone.')
+    if not username:
+        flash('You must be logged in to follow someone.')
+        return redirect(url_for('login'))
+    User(username).follow_user(user_name)
 
-	User(username).follow_user(user_name)
+    flash('following')
+    return redirect(request.referrer)
 
-	flash('following')
-	return redirect(request.referrer)
+@app.route('/unfollow_user/<user_name>')
+def unfollow_user(user_name):
+    username = session.get('username')
+
+    if not username:
+        flash('You must be logged in to unfollow someone.')
+        return redirect(url_for('login'))
+
+    User(username).unfollow_user(user_name)
+    flash('unfollowing ' + user_name)
+    user = User(username)
+    #ser.get_followers()
+    user2 = user.get_followers()
+    return redirect(url_for('index'))
+    #return render_template('followers.html', username=username, user2 =user2)
+
+    #return redirect(request.referrer)
 
 @app.route('/profile/<username>')
 def profile(username):
@@ -310,10 +327,17 @@ def bookmarks(username):
 
 @app.route('/profile/<username>/followers', methods=['GET','POST'])
 def followers(username):
+
+    username0 = session.get('username')
+    if not username0:
+        flash('You must be logged in to view followers.')
+        return redirect(url_for('login'))
+
     user = User(username)
     user2 = user.get_followers()
-
     return render_template('followers.html', username=username, user2 =user2)
+
+
 
 @app.route('/questions', methods=['GET', 'POST'])
 def questions():
