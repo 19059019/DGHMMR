@@ -63,7 +63,6 @@ class User:
             print(node);
             relationship = Relationship(node,'TAGGED',question)
             graph.create(relationship)
-70
 
     def add_answer(self, questionID, text):
         # find the user in the database
@@ -301,9 +300,7 @@ def get_answers():
 def get_followed_questions(username):
     query = '''
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
-    WHERE you.username = "Adam1"
     WHERE you.username = {username}
-    WHERE you.username = "Adam1"
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
     '''
@@ -335,4 +332,4 @@ def get_followed_answers(username):
     ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)
-0
+
