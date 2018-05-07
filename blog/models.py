@@ -34,7 +34,7 @@ class User:
             return bcrypt.verify(password, user['password'])
         else:
             return False
-            
+
     def add_question(self, title, text):
         # find the user in the database
         user = self.find()
@@ -50,11 +50,11 @@ class User:
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ASKED', question)
         graph.create(rel)
-        
+
     def add_answer(self, questionID, text):
         # find the user in the database
         user = self.find()
-        
+
         # make a new answer node with the answer details
         answer = Node(
             'Answer',
@@ -64,18 +64,18 @@ class User:
             date=date(),
             upvotes=0
         )
-        
+
         # get the question node that the answer is for
         question = graph.find_one('Question', 'id', questionID)
-        
+
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ANSWERED', answer)
         graph.create(rel)
-        
+
         # create a relationship between question and answer to question
         rel = Relationship(answer, 'ANSWER_TO', question)
         graph.create(rel)
-        
+
     def upvote_answer(self, answer_id):
         user = self.find()
         answer = graph.find_one('Answer', 'id', answer_id)
@@ -87,7 +87,7 @@ class User:
         SET answer.upvotes = answer.upvotes + 1
         '''
         graph.run(query, answer_id=answer_id)
-        
+
     def bookmark_question(self, question_id):
         user = self.find()
         question = graph.find_one('Question', 'id', question_id)
@@ -169,13 +169,12 @@ class User:
 
         return graph.run(query, they=other.username, you=self.username).next
 
-    def get_bookmark(self):
+    def get_bookmarked_questions(self):
         query = '''
-        MATCH (user:User)-[r:BOOKMARK]->(post:Post)<-[:TAGGED]-(tag:Tag)
+        MATCH (user:User)-[:BOOKMARK]->(question:Question)
         WHERE user.username = {username}
-        RETURN user.username AS username, post, COLLECT(tag.name) AS tags
+        RETURN user.username AS username, question, ID(question) AS num
         '''
-
         return graph.run(query, username=self.username)
 
     def get_followers(self):
@@ -261,8 +260,8 @@ def get_answers():
 
 def get_followed_questions(username):
     query = '''
-    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question) 
-    WHERE you.username = "Adam1" 
+    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
+    WHERE you.username = "Adam1"
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
     '''
