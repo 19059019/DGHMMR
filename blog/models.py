@@ -82,11 +82,16 @@ class User:
         rel = Relationship(user, 'UPVOTE', answer)
         graph.merge(rel)
         query = '''
+        MATCH (u:User)-[r:UPVOTE]->(a:Answer)
+        WHERE a.id = {answer_id}
+        RETURN count(u)'''
+        query1 = '''
         MATCH (answer:Answer)
         WHERE answer.id = {answer_id}
-        SET answer.upvotes = answer.upvotes + 1
+        SET answer.upvotes = {upvotes}
         '''
-        graph.run(query, answer_id=answer_id)
+        upvotes = graph.evaluate(query, answer_id=answer_id)
+        graph.run(query1, answer_id=answer_id, upvotes=upvotes)
 
     def bookmark_question(self, question_id):
         user = self.find()
