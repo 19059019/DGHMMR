@@ -246,5 +246,6 @@ def get_followed_questions(username):
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question) 
     WHERE you.username = "Adam1" 
     RETURN question, COLLECT(DISTINCT question)
+    ORDER BY question.date DESC, question.timestamp DESC
     '''
     return graph.run(query, username=username)
