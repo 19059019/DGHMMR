@@ -14,7 +14,7 @@ app = Flask(__name__)
 ICON_FOLDER = 'blog/static/icons/'
 
 # ONLY RUN ONCE TO INITIALZE THE TOPICS
-init_topics();
+#init_topics();
 
 @app.route('/')
 def index():
@@ -333,7 +333,6 @@ def followed_questions():
     questions = get_followed_questions(session['username'])
     return render_template('questions.html', questions=questions)
 
-<<<<<<< HEAD
 @app.route('/follow_topics', methods=['GET', 'POST'])
 def follow_topics():
     topics = get_topics()
@@ -351,9 +350,8 @@ def follow_topic(TOPIC):
 
     flash('following')
     return redirect(request.referrer)
-=======
+
 @app.route('/followed_answers', methods=['GET', 'POST'])
 def followed_answers():
     answers = get_followed_answers(session['username'])
     return render_template('see_followed_answers.html', answers=answers)
->>>>>>> dfb589eed480ca6ae462b455c5fcb0ac356dfd70
