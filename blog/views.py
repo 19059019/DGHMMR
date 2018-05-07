@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -11,8 +11,7 @@ ICON_FOLDER = 'blog/static/icons/'
 
 @app.route('/')
 def index():
-    posts = get_todays_recent_posts()
-    return render_template('index.html', posts=posts)
+    return render_template('index.html')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -57,47 +56,60 @@ def logout():
     flash('Logged out.')
     return redirect(url_for('index'))
 
-@app.route('/add_post', methods=['POST'])
-def add_post():
+@app.route('/add_question', methods=['POST'])
+def add_question():
     title = request.form['title']
-    tags = request.form['tags']
+    #tags = request.form['tags']
     text = request.form['text']
 
     if not title:
-        flash('You must give your post a title.')
-    elif not tags:
-        flash('You must give your post at least one tag.')
+        flash('You must give your question a title.')
+    #elif not tags:
+    #    flash('You must give your post at least one tag.')
     elif not text:
-        flash('You must give your post a text body.')
+        flash('You must give your question a text body.')
     else:
-        User(session['username']).add_post(title, tags, text)
+        User(session['username']).add_question(title, text)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('questions'))
 
-@app.route('/like_post/<post_id>')
-def like_post(post_id):
+@app.route('/add_answer', methods=['POST'])
+def add_answer():
+    text = request.form['text']
+    questionID = request.form['questionID']
+
+    if not text:
+        flash('You must give your answer a text body.')
+    else:
+        pass
+        User(session['username']).add_answer(questionID, text)
+
+    return redirect(url_for('questions'))
+
+@app.route('/upvote_answer/<answer_id>')
+def upvote_answer(answer_id):
     username = session.get('username')
 
     if not username:
-        flash('You must be logged in to like a post.')
+        flash('You must be logged in to upvote an answer.')
         return redirect(url_for('login'))
 
-    User(username).like_post(post_id)
+    User(username).upvote_answer(answer_id)
 
-    flash('Liked post.')
+    flash('Upvoted answer.')
     return redirect(request.referrer)
 
-@app.route('/bookmark_post/<post_id>')
-def bookmark_post(post_id):
+@app.route('/bookmark_question/<question_id>')
+def bookmark_question(question_id):
     username = session.get('username')
 
     if not username:
-        flash('You must be logged in to bookmark a post.')
+        flash('You must be logged in to bookmark a question.')
         return redirect(url_for('login'))
 
-    User(username).bookmark_post(post_id)
+    User(username).bookmark_question(question_id)
 
-    flash('Bookmarked post.')
+    flash('Bookmarked question.')
     return redirect(request.referrer)
 
 @app.route('/follow_user/<user_name>')
@@ -111,11 +123,6 @@ def follow_user(user_name):
 
 	flash('following')
 	return redirect(request.referrer)
-<<<<<<< HEAD
-=======
-
-
->>>>>>> bookmark
 
 @app.route('/profile/<username>')
 def profile(username):
@@ -266,7 +273,6 @@ def bookmarks(username):
 
     return render_template('bookmarks.html', username=username, posts=posts)
 
-
 @app.route('/profile/<username>/followers', methods=['GET','POST'])
 def followers(username):
     user = User(username)
@@ -274,3 +280,12 @@ def followers(username):
 
     return render_template('followers.html', username=username, user2 =user2)
 
+@app.route('/questions', methods=['GET', 'POST'])
+def questions():
+    questions = get_questions()
+    return render_template('questions.html', questions=questions)
+
+@app.route('/followed_questions', methods=['GET', 'POST'])
+def followed_questions():
+    questions = get_followed_questions(session['username'])
+    return render_template('questions.html', questions=questions)

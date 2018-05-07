@@ -53,8 +53,6 @@
             <p>There aren't any users who've blogged about the same tags as you!</p>
           {% endfor %}
 
-        <h3>Your recent posts:</h3>
-
     {% else %}
 
   <p>{{ username }} has liked {{ common.likes }} of your posts and
@@ -65,11 +63,7 @@
       {% endif %}
   </p>
 
-  <h3>{{ username }}'s recent posts:</h3>
-
     {% endif %}
 {% endif %}
-
-{% include "display_posts.html" %}
 
 {% endblock %}
