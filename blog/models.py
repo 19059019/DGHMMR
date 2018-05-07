@@ -34,7 +34,7 @@ class User:
             return bcrypt.verify(password, user['password'])
         else:
             return False
-            
+
     def add_question(self, title, text):
         # find the user in the database
         user = self.find()
@@ -50,11 +50,11 @@ class User:
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ASKED', question)
         graph.create(rel)
-        
+
     def add_answer(self, questionID, text):
         # find the user in the database
         user = self.find()
-        
+
         # make a new answer node with the answer details
         answer = Node(
             'Answer',
@@ -64,18 +64,18 @@ class User:
             date=date(),
             upvotes=0
         )
-        
+
         # get the question node that the answer is for
         question = graph.find_one('Question', 'id', questionID)
-        
+
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ANSWERED', answer)
         graph.create(rel)
-        
+
         # create a relationship between question and answer to question
         rel = Relationship(answer, 'ANSWER_TO', question)
         graph.create(rel)
-        
+
     def upvote_answer(self, answer_id):
         user = self.find()
         answer = graph.find_one('Answer', 'id', answer_id)
@@ -87,7 +87,7 @@ class User:
         SET answer.upvotes = answer.upvotes + 1
         '''
         graph.run(query, answer_id=answer_id)
-        
+
     def bookmark_question(self, question_id):
         user = self.find()
         question = graph.find_one('Question', 'id', question_id)
@@ -127,14 +127,13 @@ class User:
     def get_suggested_users(self):
         # Gets suggested users to the logged-in user based on follows
         # and ordered by upvotes
-        # TODO update query after Hendri is done with his section
+
         query = '''
-        MATCH (you:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
-              (they:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
+        MATCH (you:User)-[:FOLLOW]->(user:User),
+        (user)-[:FOLLOW]->(they:User)
         WHERE you.username = {username} AND you <> they
-        WITH they, COLLECT(DISTINCT tag.name) AS tags
-        ORDER BY SIZE(tags) DESC LIMIT 10
-        RETURN they.username AS suggested_user
+        RETURN they.username AS suggested_user, they.icon AS suggested_icon
+        ORDER BY SIZE((they)-[:ANSWERED]->(:Question)<-[:UPVOTE]-(:User)) DESC LIMIT 10
         '''
 
         return graph.run(query, username=self.username)
@@ -261,7 +260,7 @@ def get_answers():
 
 def get_followed_questions(username):
     query = '''
-    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question) 
+    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
     WHERE you.username = {username}
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
@@ -270,9 +269,9 @@ def get_followed_questions(username):
 
 def get_followed_answers(username):
     query = '''
-    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question) 
+    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question)
     WHERE me.username= {username}
-    RETURN answer, q.title AS question_title, they AS answerer 
+    RETURN answer, q.title AS question_title, they AS answerer
     ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)
