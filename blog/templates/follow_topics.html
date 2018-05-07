@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Follow Topics</h2>
+
+<table style="width:100%">
+
+
+  {% for topic in topics %}
+  <tr>
+  <td>
+    {{topic}}
+  </td>
+  <td>
+      <a href="{{ url_for('follow_topic', TOPIC=topic)}}">follow</a>
+  </td>
+    </tr>
+  {% endfor %}
+  </table>
+{% endblock %}

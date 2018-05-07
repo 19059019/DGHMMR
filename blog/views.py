@@ -1,4 +1,4 @@
-from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions
+from .models import User, get_todays_recent_posts, search_users, valid_file, update_profile, update_icon, get_questions, get_answers, get_followed_questions, get_topics, init_topics
 from passlib.hash import bcrypt
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 import re
@@ -8,6 +8,9 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 
 ICON_FOLDER = 'blog/static/icons/'
+
+# ONLY RUN ONCE TO INITIALZE THE TOPICS
+init_topics();
 
 @app.route('/')
 def index():
@@ -58,20 +61,41 @@ def logout():
 
 @app.route('/add_question', methods=['POST'])
 def add_question():
+
+
     title = request.form['title']
     #tags = request.form['tags']
     text = request.form['text']
+    tags = get_topics()
+    tags = list(map(lambda x:x.strip(),tags))
+    topics = []
+
+    for tag in tags:
+
+        print(tag)
+
+    for key in request.form.keys() :
+        key = key.strip()
+        print(key)
+        if key in tags :
+             topics.append(key)
+             print("APPEND")
+
+
+
 
     if not title:
         flash('You must give your question a title.')
-    #elif not tags:
-    #    flash('You must give your post at least one tag.')
     elif not text:
         flash('You must give your question a text body.')
+    elif not topics:
+        flash('You must give your post at least one tag.')
     else:
-        User(session['username']).add_question(title, text)
+        User(session['username']).add_question(title, text,topics)
+
 
     return redirect(url_for('questions'))
+
 
 @app.route('/add_answer', methods=['POST'])
 def add_answer():
@@ -280,9 +304,28 @@ def followers(username):
 @app.route('/questions', methods=['GET', 'POST'])
 def questions():
     questions = get_questions()
-    return render_template('questions.html', questions=questions)
+    tags = get_topics()
+    return render_template('questions.html', questions=questions, topics = tags)
 
 @app.route('/followed_questions', methods=['GET', 'POST'])
 def followed_questions():
     questions = get_followed_questions(session['username'])
     return render_template('questions.html', questions=questions)
+
+@app.route('/follow_topics', methods=['GET', 'POST'])
+def follow_topics():
+    topics = get_topics()
+    #followed_topics = get_followed_topics();
+    return render_template('follow_topics.html',topics=topics)
+
+@app.route('/follow_topic/<TOPIC>')
+def follow_topic(TOPIC):
+    username = session.get('username')
+
+    if not username:
+    	flash('You must be logged in to follow a topic.')
+
+    User(username).follow_topic(TOPIC)
+
+    flash('following')
+    return redirect(request.referrer)

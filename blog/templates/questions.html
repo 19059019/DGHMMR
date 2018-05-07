@@ -7,10 +7,24 @@
         <dl>
             <dt>Title:</dt>
             <dd><input type="text" size="30" name="title"></dd>
-            <!-- 
-            <dt>Tags (separated by commas):</dt>
-            <dd><input type="text" size="30" name="tags"></dd>
-            -->
+            <br />
+            <dt>Tags :</dt>
+            <dd>
+            <table style="width:50%">
+            {% for topic in topics %}
+            <tr>
+              <td style="font-weight: normal">
+                {{topic}}
+              </td>
+              <td>
+                <input type="checkbox" name="{{topic}}" />
+              </td>
+            </tr>
+            {% endfor %}
+            </table>
+            </dd>
+
+            <br />
             <dt>Text:</dt>
             <dd><textarea name="text" rows="5" cols="40"></textarea></dd>
         </dl>

@@ -34,8 +34,9 @@ class User:
             return bcrypt.verify(password, user['password'])
         else:
             return False
-            
-    def add_question(self, title, text):
+
+    def add_question(self, title, text, topics):
+        print("Adding Question")
         # find the user in the database
         user = self.find()
         # make a new question node with the question details
@@ -45,16 +46,23 @@ class User:
             title=title,
             text=text,
             timestamp=timestamp(),
-            date=date()
+            date=date(),
         )
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ASKED', question)
         graph.create(rel)
-        
+        # Create a relationship between the tags and and the question
+        for topic in topics :
+            print(topic)
+            node = graph.find_one('Tag','tag',topic)
+            print(node);
+            relationship = Relationship(node,'TAGGED',question)
+            graph.create(relationship)
+
     def add_answer(self, questionID, text):
         # find the user in the database
         user = self.find()
-        
+
         # make a new answer node with the answer details
         answer = Node(
             'Answer',
@@ -64,18 +72,18 @@ class User:
             date=date(),
             upvotes=0
         )
-        
+
         # get the question node that the answer is for
         question = graph.find_one('Question', 'id', questionID)
-        
+
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ANSWERED', answer)
         graph.create(rel)
-        
+
         # create a relationship between question and answer to question
         rel = Relationship(answer, 'ANSWER_TO', question)
         graph.create(rel)
-        
+
     def upvote_answer(self, answer_id):
         user = self.find()
         answer = graph.find_one('Answer', 'id', answer_id)
@@ -87,7 +95,7 @@ class User:
         SET answer.upvotes = answer.upvotes + 1
         '''
         graph.run(query, answer_id=answer_id)
-        
+
     def bookmark_question(self, question_id):
         user = self.find()
         question = graph.find_one('Question', 'id', question_id)
@@ -99,6 +107,15 @@ class User:
         user_followed = graph.find_one('User', 'username', user_name)
         rel = Relationship(user_following, 'FOLLOW', user_followed)
         graph.create(rel)
+
+    def follow_topic(self, topic):
+        print(topic)
+        user_following = self.find()
+        topic_followed = graph.find_one('Tag', 'tag', topic)
+        rel = Relationship(user_following, 'FOLLOW', topic_followed)
+        graph.create(rel)
+
+
 
     def get_recent_posts(self):
         query = '''
@@ -187,6 +204,15 @@ class User:
 
         return graph.run(query, username=self.username)
 
+    def get_followed_tags(self):
+        query = '''
+        MATCH (user:User)-[r:FOLLOW]->(tag:Tag)
+        WHERE user.username = {username}
+        RETURN tag.tag AS tag
+        '''
+
+        return graph.run(query, username=self.username)
+
 def get_todays_recent_posts():
     query = '''
     MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)
@@ -261,9 +287,27 @@ def get_answers():
 
 def get_followed_questions(username):
     query = '''
-    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question) 
-    WHERE you.username = "Adam1" 
+    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
+    WHERE you.username = "Adam1"
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
     '''
     return graph.run(query, username=username)
+
+def get_topics():
+    topicFiles = 'blog/tags.txt'
+    with open(topicFiles) as file_object:
+        topics = file_object.readlines()
+
+    topics = list(map(lambda x:x.strip(),topics))
+    return topics
+# Adds all the topics to the database
+def init_topics():
+    topicFiles = 'blog/tags.txt'
+    with open(topicFiles) as file_object:
+        topics = file_object.readlines()
+
+        for topic in topics:
+            topic = topic.strip()
+            tag = Node('Tag', tag=topic)
+            graph.create(tag)
