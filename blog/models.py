@@ -168,13 +168,12 @@ class User:
 
         return graph.run(query, they=other.username, you=self.username).next
 
-    def get_bookmark(self):
+    def get_bookmarked_questions(self):
         query = '''
-        MATCH (user:User)-[r:BOOKMARK]->(post:Post)<-[:TAGGED]-(tag:Tag)
+        MATCH (user:User)-[:BOOKMARK]->(question:Question)
         WHERE user.username = {username}
-        RETURN user.username AS username, post, COLLECT(tag.name) AS tags
+        RETURN user.username AS username, question, ID(question) AS num
         '''
-
         return graph.run(query, username=self.username)
 
     def get_followers(self):
@@ -261,7 +260,11 @@ def get_answers():
 def get_followed_questions(username):
     query = '''
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
+<<<<<<< HEAD
     WHERE you.username = {username}
+=======
+    WHERE you.username = "Adam1"
+>>>>>>> bookmark_qa
     RETURN question, COLLECT(DISTINCT question)
     ORDER BY question.date DESC, question.timestamp DESC
     '''

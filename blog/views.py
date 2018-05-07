@@ -86,6 +86,22 @@ def add_answer():
 
     return redirect(url_for('questions'))
 
+@app.route('/add_bookmark_answer', methods=['POST'])
+def add_bookmark_answer():
+    text = request.form['text']
+    questionID = request.form['questionID']
+
+    if not text:
+        flash('You must give your answer a text body.')
+    else:
+        pass
+        User(session['username']).add_answer(questionID, text)
+
+    questions = User(session['username']).get_bookmarked_questions()
+    answers = get_answers()
+
+    return render_template('bookmarks.html', questions=questions, answers=answers)
+
 @app.route('/upvote_answer/<answer_id>')
 def upvote_answer(answer_id):
     username = session.get('username')
@@ -266,9 +282,10 @@ def change_icon(username):
 @app.route('/profile/<username>/bookmarks', methods=['GET','POST'])
 def bookmarks(username):
     user = User(username)
-    posts = user.get_bookmark()
+    questions = user.get_bookmarked_questions()
+    answers = get_answers()
 
-    return render_template('bookmarks.html', username=username, posts=posts)
+    return render_template('bookmarks.html', username=username, questions=questions, answers=answers)
 
 @app.route('/profile/<username>/followers', methods=['GET','POST'])
 def followers(username):
