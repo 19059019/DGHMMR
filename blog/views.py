@@ -141,6 +141,23 @@ def upvote_answer(answer_id):
     flash('Upvoted answer.')
     return redirect(request.referrer)
 
+@app.route('/upvote_bookmark_answer/<answer_id>')
+def upvote_bookmark_answer(answer_id):
+    username = session.get('username')
+
+    if not username:
+        flash('You must be logged in to upvote an answer.')
+        return redirect(url_for('login'))
+
+    User(username).upvote_answer(answer_id)
+
+    questions = User(username).get_bookmarked_questions()
+    answers = get_answers()
+
+    flash('Upvoted answer.')
+
+    return render_template('bookmarks.html', username=username, questions=questions, answers=answers)
+
 @app.route('/bookmark_question/<question_id>')
 def bookmark_question(question_id):
     username = session.get('username')
