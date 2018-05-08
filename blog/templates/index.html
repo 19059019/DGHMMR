@@ -4,7 +4,6 @@
 <h2>Home</h2>
 
   {% if session.username %}
-
     <h3>User Search</h3>
     <form action="{{ url_for('search') }}" method="post">
         <dl>
@@ -13,25 +12,27 @@
         </dl>
         <input type="submit" value="Search">
     </form>
-
   {% endif %}
 
 <br>
 
 {% if session.username %}
-<form action="{{ url_for('followed_questions') }}" method="post">
-    <input type="submit" value="Followed user's questions">
+<form action="{{ url_for('followed_answers') }}" method="post">
+    <input type="submit" value="View answers on topics I'm following and from people I'm following">
 </form>
 {% endif %}
 
 <form action="{{ url_for('questions') }}" method="post">
-    <input type="submit" value="Questions">
+    <input type="submit" value="View all questions and answers">
 </form>
 
-{% if session.username %}
-<form action="{{ url_for('followed_answers') }}" method="post">
-    <input type="submit" value="Point 10">
-</form>
+
+{%if session.username %}
+<h2>Questions from topics and people you follow</h2>
+<br>
+{% include "display_questions.html" %}
 {% endif %}
+
+
 
 {% endblock %}

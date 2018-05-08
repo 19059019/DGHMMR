@@ -309,12 +309,12 @@ def get_followed_questions(username):
     query = '''
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
     WHERE you.username = {username}
-    RETURN question, COLLECT(DISTINCT question)
+    RETURN question, COLLECT(DISTINCT question), ID(question) AS num, them.username AS username
     ORDER BY question.last_answered DESC
-    UNION 
-    MATCH (question:Question)<-[:TAGGED]-(tag:Tag)<-[:FOLLOW]-(you:User)
+    UNION
+    MATCH (them:User)-[:ASKED]->(question:Question)<-[:TAGGED]-(tag:Tag)<-[:FOLLOW]-(you:User)
     WHERE you.username = {username} 
-    RETURN question, COLLECT(DISTINCT question) 
+    RETURN question, COLLECT(DISTINCT question), ID(question) AS num, them.username AS username
     ORDER BY question.last_answered DESC
     '''
     return graph.run(query, username=username)
@@ -342,9 +342,14 @@ def init_topics():
 
 def get_followed_answers(username):
     query = '''
-    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question)
-    WHERE me.username= {username}
-    RETURN answer, q.title AS question_title, they AS answerer
+    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question) 
+    WHERE me.username={username} 
+    WITH collect({answer:answer, q:q, they:they}) as rows
+    MATCH (me:User)-[:FOLLOW]->(tag:Tag)-[:TAGGED]->(q:Question)<-[:ANSWER_TO]-(answer:Answer)<-[:ANSWERED]-(they:User) 
+    WHERE me.username={username} 
+    WITH rows + collect({answer:answer, q:q, they:they}) as allRows
+    UNWIND allRows as row
+    RETURN row.answer AS answer, row.q.title AS question_title, row.they AS answerer
     ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)

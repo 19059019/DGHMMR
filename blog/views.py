@@ -14,7 +14,13 @@ init_topics();
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if session.get('username'):
+        questions = get_followed_questions(session['username'])
+        answers=get_answers()
+    else:
+        questions = None
+        answers = None
+    return render_template('index.html', questions=questions, answers=answers)
 
 @app.route('/register', methods=['GET','POST'])
 def register():
