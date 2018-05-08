@@ -6,6 +6,7 @@
     {% for row in user2 %}
     <p>
     {% if session.username == username %} 
+
      <a href="{{ url_for('profile', username=row.username) }}">{{ row.username }} </a> &nbsp; &nbsp;
     <a href="{{ url_for('unfollow_user', user_name=row.username)}}"> Unfollow? </a> 
     {%endif%}

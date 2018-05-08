@@ -181,7 +181,7 @@ def follow_user(user_name):
     User(username).follow_user(user_name)
 
     flash('following')
-    return redirect(request.referrer)
+    return redirect(url_for('index'))
 
 @app.route('/unfollow_user/<user_name>')
 def unfollow_user(user_name):
@@ -194,12 +194,9 @@ def unfollow_user(user_name):
     User(username).unfollow_user(user_name)
     flash('unfollowing ' + user_name)
     user = User(username)
-    #ser.get_followers()
     user2 = user.get_followers()
     return redirect(url_for('index'))
-    #return render_template('followers.html', username=username, user2 =user2)
-
-    #return redirect(request.referrer)
+    
 
 @app.route('/profile/<username>')
 def profile(username):
@@ -357,7 +354,8 @@ def followers(username):
         return redirect(url_for('login'))
 
     user = User(username)
-    user2 = user.get_followers()
+    user2 = user.get_followers()  
+
     return render_template('followers.html', username=username, user2 =user2)
 
 @app.route('/profile/<username>/tags', methods=['GET','POST'])
