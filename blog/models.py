@@ -353,3 +353,20 @@ def get_followed_answers(username):
     ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)
+
+def get_following_q(username):
+    query = '''
+    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
+    WHERE you.username = {username}
+    RETURN question, COLLECT(DISTINCT question), ID(question) AS num, them.username AS username
+    '''
+    return graph.run(query, username=username)
+
+def get_following_a(username):
+    query = '''
+    MATCH (you:User)-[:FOLLOW]-(them:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question)
+    WHERE you.username = {username}
+    RETURN answer, ID(q) as questionID, you.username AS username
+    '''
+    return graph.run(query, username=username)
+
