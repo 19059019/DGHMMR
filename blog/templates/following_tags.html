@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<h2> {{ username }} is following the following tags: </h2>
+  <dl>
+    {% for row in tags %}
+    <dt>
+
+    {% if session.username == username %}
+     {{ row.tag }}
+    {%endif%}
+
+    {% if session.username != username %}
+    {{ row.tag}}
+    {%endif%}
+
+    </dt>
+    {% endfor %}
+  </dl>
+
+{% endblock %}

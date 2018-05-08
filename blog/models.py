@@ -223,9 +223,9 @@ class User:
 
     def get_followed_tags(self):
         query = '''
-        MATCH (user:User)-[r:FOLLOW]->(tag:Tag)
+        MATCH (user:User)-[r:FOLLOW]->(tags:Tag)
         WHERE user.username = {username}
-        RETURN tag.tag AS tag
+        RETURN tags.tag AS tag
         '''
 
         return graph.run(query, username=self.username)
@@ -326,8 +326,11 @@ def init_topics():
 
         for topic in topics:
             topic = topic.strip()
-            tag = Node('Tag', tag=topic)
-            graph.create(tag)
+            node =graph.find_one('Tag', 'tag',topic)
+
+            if ( not node):
+                tag = Node('Tag', tag=topic)
+                graph.create(tag)
 
 def get_followed_answers(username):
     query = '''
@@ -337,4 +340,3 @@ def get_followed_answers(username):
     ORDER BY answer.upvotes DESC
     '''
     return graph.run(query, username=username)
-

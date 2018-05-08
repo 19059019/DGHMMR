@@ -4,15 +4,19 @@
 <h2>{{ username }}'s profile</h2>
 
 
-<p>    
+<p>
 {% if session.username != username %}
  <a href="{{ url_for('follow_user', user_name=username)}}">follow</a>
  <br>
  <a href="{{ url_for('followers', username=username)}}">View {{ username }}'s followers</a>
+ <br />
+ <a href="{{ url_for('followed_tags', username=username)}}">View {{ username }}'s tags</a>
 {%endif%}
 
 {% if session.username == username %}
     <a href="{{ url_for('followers', username=username)}}">View My Followers</a>
+    <br />
+    <a href="{{ url_for('followed_tags', username=username)}}">View My Tags</a>
 {%endif%}
 <br>
 

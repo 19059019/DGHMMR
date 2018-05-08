@@ -10,7 +10,7 @@ app = Flask(__name__)
 ICON_FOLDER = 'blog/static/icons/'
 
 # ONLY RUN ONCE TO INITIALZE THE TOPICS
-#init_topics();
+init_topics();
 
 @app.route('/')
 def index():
@@ -336,6 +336,19 @@ def followers(username):
     user = User(username)
     user2 = user.get_followers()
     return render_template('followers.html', username=username, user2 =user2)
+
+@app.route('/profile/<username>/tags', methods=['GET','POST'])
+def followed_tags(username):
+
+    username0 = session.get('username')
+    if not username0:
+        flash('You must be logged in to view followed tags.')
+        return redirect(url_for('login'))
+
+    user = User(username)
+    tags = user.get_followed_tags()
+    print(tags)
+    return render_template('following_tags.html', username=username, tags =tags)
 
 
 
