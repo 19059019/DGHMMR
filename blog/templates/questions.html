@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  {% if session.username %}
+    <h3>Ask New Question</h3>
+    <form action="{{ url_for('add_question') }}" method="post">
+        <dl>
+            <dt>Title:</dt>
+            <dd><input type="text" size="30" name="title"></dd>
+            <br />
+            <dt>Tags :</dt>
+            <dd>
+            <table style="width:50%">
+            {% for topic in topics %}
+            <tr>
+              <td style="font-weight: normal">
+                {{topic}}
+              </td>
+              <td>
+                <input type="checkbox" name="{{topic}}" />
+              </td>
+            </tr>
+            {% endfor %}
+            </table>
+            </dd>
+
+            <br />
+            <dt>Text:</dt>
+            <dd><textarea name="text" rows="5" cols="40"></textarea></dd>
+        </dl>
+        <input type="submit" value="Ask">
+    </form>
+  {% endif %}
+
+
+{% include "display_questions.html" %}
+
+
+{% endblock %}

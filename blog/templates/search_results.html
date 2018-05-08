@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Search Results</h2>
+
+{% for user in results %}
+    <p>
+        <img src="/static/icons/{{ user.result_icon }}" alt="{{ user.result_icon }}" style="max-width:10%;" align="middle">
+        <a href="{{ url_for('profile', username=user.result_user) }}">{{ user.result_user }} </a>&nbsp;
+        <a href="{{ url_for('follow_user', user_name=user.result_user)}}">follow</a>
+    </p>
+{% else %}
+    <p>There aren't any users matching {{ username }}. Try searching for a different user.</p>
+{% endfor %}
+
+{% endblock %}

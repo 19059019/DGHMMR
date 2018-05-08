@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <h3>Suggested Users</h3>
+
+    {% for user in suggested %}
+        <p>
+            <img src="/static/icons/{{ user.suggested_icon }}" alt="{{ user.suggested_icon }}" style="max-width:10%;" align="middle">
+            <a href="{{ url_for('profile', username=user.suggested_user) }}">{{ user.suggested_user }}</a>&nbsp;
+            <a href="{{ url_for('follow_user', user_name=user.suggested_user)}}">follow</a>
+            
+        </p>
+    {% else %}
+    <p>You dont have any suggested users. Try interacting more with the Quora Lite community.</p>
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Bookmarked Questions</h2>
+
+<ul class="questions">
+{% for ques_row in questions %}
+  <li>
+    <b>{{ ques_row.question.title }}</b>
+    by <a href="{{ url_for('profile', username=ques_row.username) }}">{{ ques_row.username }}</a>
+    on {{ ques_row.question.date }}
+    <br>
+    <br>
+    {{ ques_row.question.text }}
+
+      {% if session.username %}
+      <h3>Add New Answer</h3>
+      <form action="{{ url_for('add_bookmark_answer') }}" method="post">
+          <dl>
+              <dt>Text:</dt>
+              <dd><textarea name="text" rows="5" cols="40"></textarea></dd>
+          </dl>
+          <input type="hidden" name="questionID" value="{{ ques_row.question.id }}">
+          <input type="submit" value="Answer">
+      </form>
+      {% endif %}
+
+
+      <!-- answers section -->
+
+      <ul class="answers">
+
+      {% set answers=ob_answers() %}
+
+      {% for ans_row in answers if ques_row.num == ans_row.questionID %}
+
+      <li>
+          <b><a href="{{ url_for('profile', username=ans_row.username) }}">{{ ans_row.username }}</a></b>
+          answered on {{ ans_row.answer.date }}
+          <a href="{{ url_for('upvote_bookmark_answer', answer_id=ans_row.answer.id) }}">upvote ({{ans_row.answer.upvotes}})</a>
+          <br>
+          {{ ans_row.answer.text }}
+
+          {% else %}
+            <li>There aren't any answers yet!
+
+      {% endfor %}
+      </ul>
+
+      <!-- answers section -->
+
+      {% else %}
+        <li>There aren't any bookmarks yet!
+{% endfor %}
+</ul>
+
+
+{% endblock %}
