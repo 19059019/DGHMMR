@@ -47,6 +47,7 @@ class User:
             text=text,
             timestamp=timestamp(),
             date=date(),
+            last_answered=timestamp()
         )
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ASKED', question)
@@ -76,6 +77,8 @@ class User:
 
         # get the question node that the answer is for
         question = graph.find_one('Question', 'id', questionID)
+        question['last_answered']=timestamp()
+        question.push()
 
         # create a relationship between user who asked question and the question
         rel = Relationship(user, 'ANSWERED', answer)
@@ -307,7 +310,12 @@ def get_followed_questions(username):
     MATCH (you:User)-[:FOLLOW]-(them:User)-[:ASKED]->(question:Question)
     WHERE you.username = {username}
     RETURN question, COLLECT(DISTINCT question)
-    ORDER BY question.date DESC, question.timestamp DESC
+    ORDER BY question.last_answered DESC
+    UNION 
+    MATCH (question:Question)<-[:TAGGED]-(tag:Tag)<-[:FOLLOW]-(you:User)
+    WHERE you.username = {username} 
+    RETURN question, COLLECT(DISTINCT question) 
+    ORDER BY question.last_answered DESC
     '''
     return graph.run(query, username=username)
 

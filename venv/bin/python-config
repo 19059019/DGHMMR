@@ -1,4 +1,4 @@
-#!/home/gman/Desktop/Computer Science/2018/GroupProject/DGHMMR/venv/bin/python
+#!/home/ryan/Desktop/QuoraLite/DGHMMR/venv/bin/python
 
 import sys
 import getopt

@@ -351,7 +351,6 @@ def followed_tags(username):
     return render_template('following_tags.html', username=username, tags =tags)
 
 
-
 @app.route('/questions', methods=['GET', 'POST'])
 def questions():
     questions = get_questions()
