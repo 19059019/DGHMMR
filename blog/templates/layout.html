@@ -1,8 +1,12 @@
 <!doctype html>
+<head>
 <title>Quora Lite</title>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<link rel="icon" href="{{ url_for('static', filename='Q.jpg')}}">
+</head>
+
 <div class="page">
-  <h1>Quora Lite</h1>
+    <img src="/static/heading.png" alt="Quora Lite" style="max-width:40%;" align="middle">
   <div class="metanav">
   {% if session.username %}
   Logged in as {{ session.username }}

@@ -124,7 +124,7 @@ class User:
     def unfollow_user(self, user_name):
         user1 = self.username
         user2 = graph.find_one('User', 'username', user_name)
-        #rel = Relationship(user1,
+
         query = '''
         MATCH (a:User)-[r:FOLLOW]->(b:User)
         WHERE a.username = {us1} AND b.username = {us2}
@@ -313,7 +313,7 @@ def get_followed_questions(username):
     ORDER BY question.last_answered DESC
     UNION
     MATCH (them:User)-[:ASKED]->(question:Question)<-[:TAGGED]-(tag:Tag)<-[:FOLLOW]-(you:User)
-    WHERE you.username = {username} 
+    WHERE you.username = {username}
     RETURN question, COLLECT(DISTINCT question), ID(question) AS num, them.username AS username
     ORDER BY question.last_answered DESC
     '''
@@ -342,11 +342,11 @@ def init_topics():
 
 def get_followed_answers(username):
     query = '''
-    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question) 
-    WHERE me.username={username} 
+    MATCH (me:User)-[:FOLLOW]->(they:User)-[:ANSWERED]->(answer:Answer)-[:ANSWER_TO]->(q:Question)
+    WHERE me.username={username}
     WITH collect({answer:answer, q:q, they:they}) as rows
-    MATCH (me:User)-[:FOLLOW]->(tag:Tag)-[:TAGGED]->(q:Question)<-[:ANSWER_TO]-(answer:Answer)<-[:ANSWERED]-(they:User) 
-    WHERE me.username={username} 
+    MATCH (me:User)-[:FOLLOW]->(tag:Tag)-[:TAGGED]->(q:Question)<-[:ANSWER_TO]-(answer:Answer)<-[:ANSWERED]-(they:User)
+    WHERE me.username={username}
     WITH rows + collect({answer:answer, q:q, they:they}) as allRows
     UNWIND allRows as row
     RETURN row.answer AS answer, row.q.title AS question_title, row.they AS answerer
@@ -369,4 +369,3 @@ def get_following_a(username):
     RETURN answer, ID(q) as questionID, you.username AS username
     '''
     return graph.run(query, username=username)
-
