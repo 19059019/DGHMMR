@@ -1,6 +1,6 @@
   <ul class="questions">
   {% for ques_row in questions %}
-    <div style="border:solid black 1.5px; padding: 1px 1px 1px 1px">
+    <div style="border:solid black 1.5px; padding: 5px 5px 5px 5px">
       <li>
     	<b>{{ ques_row.question.title }}</b>
     	by <a href="{{ url_for('profile', username=ques_row.username) }}">{{ ques_row.username }}</a>
@@ -35,11 +35,11 @@
             answered on {{ ans_row.answer.date }}
             <a href="{{ url_for('upvote_answer', answer_id=ans_row.answer.id) }}">upvote ({{ans_row.answer.upvotes}})</a>
             <br>
-            
-            
-                
+
+
+
                 {{ ans_row.answer.text }}
-           
+
             <br>
 
             {% else %}
@@ -48,15 +48,15 @@
 
         {% endfor %}
         </ul>
-          
+
 
         <!-- answers section -->
 
         {% else %}
           <li>There aren't any questions yet!
-             
+
    </div>
        <br>
 {% endfor %}
-              
+
   </ul>
