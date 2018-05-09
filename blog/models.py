@@ -170,7 +170,7 @@ class User:
         query = '''
         MATCH (you:User)-[:FOLLOW]->(user:User),
         (user)-[:FOLLOW]->(they:User)
-        WHERE you.username = {username} AND you <> they
+        WHERE you.username = "Stephan1" AND you <> they AND NOT ((you:User)-[:FOLLOW]->(they:User))
         RETURN they.username AS suggested_user, they.icon AS suggested_icon
         ORDER BY SIZE((they)-[:ANSWERED]->(:Question)<-[:UPVOTE]-(:User)) DESC LIMIT 10
         '''
