@@ -6,17 +6,17 @@
 
 <p>
 {% if session.username != username %}
- <a href="{{ url_for('follow_user', user_name=username)}}">follow</a>
- <br>
- <a href="{{ url_for('followers', username=username)}}">View {{ username }}'s followers</a>
- <br />
- <a href="{{ url_for('followed_tags', username=username)}}">View {{ username }}'s tags</a>
+ <a href="{{ url_for('follow_user', user_name=username)}}">Follow</a>
+ <br><br>
+ <a href="{{ url_for('followers', username=username)}}">View who {{ username }} is following</a>
+ <br><br>
+ <a href="{{ url_for('followed_tags', username=username)}}">View {{ username }}'s Topics</a>
 {%endif%}
 
 {% if session.username == username %}
-    <a href="{{ url_for('followers', username=username)}}">View My Followers</a>
-    <br />
-    <a href="{{ url_for('followed_tags', username=username)}}">View My Tags</a>
+    <a href="{{ url_for('followers', username=username)}}">View who I am  Following</a>
+    <br><br>
+    <a href="{{ url_for('followed_tags', username=username)}}">View My Topics</a>
 {%endif%}
 <br>
 

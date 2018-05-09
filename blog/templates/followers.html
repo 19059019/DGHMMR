@@ -3,18 +3,30 @@
 
 
 <h2> {{ username }} is Following: </h2>
+ <table style="width:100%">
     {% for row in user2 %}
-    <p>
-    {% if session.username == username %} 
 
-     <a href="{{ url_for('profile', username=row.username) }}">{{ row.username }} </a> &nbsp; &nbsp;
-    <a href="{{ url_for('unfollow_user', user_name=row.username)}}"> Unfollow? </a> 
+
+    <p>
+       
+    <tr>
+    {% if session.username == username %} 
+        <td>    
+            <a href="{{ url_for('profile', username=row.username) }}">{{ row.username }} </a> &nbsp; &nbsp;
+        </td>
+    <td>
+        <a href="{{ url_for('unfollow_user', user_name=row.username)}}"> Unfollow? </a> 
+    </td>
+        <br><br>
     {%endif%}
 
     {% if session.username != username %} 
-      <a href="{{ url_for('profile', username=row.username) }}">{{ row.username }} </a>
+        <td>
+            <a href="{{ url_for('profile', username=row.username) }}">{{ row.username }} </a>             
+        </td>
     {%endif%}  
-
+    </tr>
+            
     </p>
     {% endfor %}
 

@@ -20,15 +20,17 @@
 <form action="{{ url_for('followed_answers') }}" method="post">
     <input type="submit" value="View answers on topics I'm following and from people I'm following">
 </form>
+<br>
 <form action="{{ url_for('following_qanda') }}" method="post">
     <input type="submit" value="View questions and answers from people I'm following">
 </form>
+<br>
 {% endif %}
 
 <form action="{{ url_for('questions') }}" method="post">
     <input type="submit" value="View all questions and answers">
 </form>
-
+<br>
 
 {%if session.username %}
 <h2>Questions from topics and people you follow</h2>
