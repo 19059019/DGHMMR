@@ -16,5 +16,3 @@ a:visited 		{ color: #800080; }
 .flash          { background: #cee5F5; padding: 0.5em; border: 1px solid #aacbe2; }
 .error          { background: #f0d6d6; padding: 0.5em; }
 .scrollabletextbox { max-height:400px;max-width:100%;font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;font-size: 100%;overflow:scroll;}
-.left { float:left; }
-.right{ float:right; }
