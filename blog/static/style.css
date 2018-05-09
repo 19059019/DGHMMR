@@ -1,5 +1,7 @@
-body            { font-family: sans-serif; background: #00b300; }
-a, h1, h3       { color: #4baa47; }
+body            { font-family: sans-serif; background-image: url("/static/BeFunky.jpg"); background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;}
+a, h1, h3       { color: #377ba8; }
 h1, h2, h3      { font-family: 'Georgia', serif; margin: 0; }
 h1, h2          { border-bottom: 2px solid #eee; padding: 3px; }
 h3              { padding: 3px; }
