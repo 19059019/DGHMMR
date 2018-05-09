@@ -1,6 +1,6 @@
   <ul class="questions">
   {% for ques_row in questions %}
-    <div style="border:solid black 1.5px; padding: 1px 1px 1px 1px">
+    <div style="border:solid black 1.5px; padding: 5px 5px 5px 5px">
       <li>
     	<b>{{ ques_row.question.title }}</b>
     	by <a href="{{ url_for('profile', username=ques_row.username) }}">{{ ques_row.username }}</a>
