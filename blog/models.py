@@ -233,6 +233,16 @@ class User:
 
         return graph.run(query, username=self.username)
 
+
+    def check_if_following(self, user_name2):
+        user1 = self.username
+        query = '''
+        MATCH (user:User)-[r:FOLLOW]->(user2:User)
+        WHERE user.username = {username} AND user2.username = {user_name2}
+        RETURN count(user)>0
+        '''
+        return graph.evaluate(query, username=self.username, user_name2=user_name2)
+
 def get_todays_recent_posts():
     query = '''
     MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)

@@ -5,9 +5,16 @@
 
 
 <p>
-{% if session.username != username %}
- <a href="{{ url_for('follow_user', user_name=username)}}">Follow</a>
+{% if session.username != username  and following == true %}
+ <a href="{{ url_for('unfollow_user', user_name=username)}}">Unfollow</a>
+    {%endif%}
  <br><br>
+    {%if session.username != username and following != true%}
+ <a href="{{ url_for('follow_user', user_name=username)}}">Follow</a>
+    <br><br>
+    {%endif%}
+    
+{% if session.username != username %}
  <a href="{{ url_for('followers', username=username)}}">View who {{ username }} is following</a>
  <br><br>
  <a href="{{ url_for('followed_tags', username=username)}}">View {{ username }}'s Topics</a>

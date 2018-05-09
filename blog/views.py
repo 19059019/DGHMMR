@@ -196,6 +196,8 @@ def unfollow_user(user_name):
     user = User(username)
     user2 = user.get_followers()
     return redirect(url_for('index'))
+
+
     
 
 @app.route('/profile/<username>')
@@ -220,6 +222,9 @@ def profile(username):
     bio = user_being_viewed.get_bio()
     icon = user_being_viewed.get_icon()
 
+    user_logged_in = User(logged_in_username)
+    following = user_logged_in.check_if_following(user_being_viewed_username)     
+
     return render_template(
         'profile.html',
         username=username,
@@ -227,7 +232,8 @@ def profile(username):
         similar=similar,
         common=common,
         bio=bio,
-        icon=icon
+        icon=icon,
+        following=following
     )
 
 @app.route('/search', methods=['GET', 'POST'])
