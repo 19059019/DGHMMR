@@ -5,7 +5,8 @@
 <link rel="icon" href="{{ url_for('static', filename='Q.jpg')}}">
 </head>
 
-<div class="page">
+
+<div class="page" background="/static/BeFunky.jpg">
     <img src="/static/heading.png" alt="Quora Lite" style="max-width:40%;" align="middle">
   <div class="metanav">
   {% if session.username %}
@@ -27,3 +28,4 @@
   {% endfor %}
   {% block body %}{% endblock %}
 </div>
+

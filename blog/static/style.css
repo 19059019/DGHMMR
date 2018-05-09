@@ -1,4 +1,6 @@
-body            { font-family: sans-serif; background: #00b300; }
+body            { font-family: sans-serif; background-image: url("/static/BeFunky.jpg"); background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;}
 a, h1, h3       { color: #377ba8; }
 h1, h2, h3      { font-family: 'Georgia', serif; margin: 0; }
 h1, h2          { border-bottom: 2px solid #eee; padding: 3px; }
@@ -14,3 +16,5 @@ a:visited 		{ color: #800080; }
 .flash          { background: #cee5F5; padding: 0.5em; border: 1px solid #aacbe2; }
 .error          { background: #f0d6d6; padding: 0.5em; }
 .scrollabletextbox { max-height:400px;max-width:100%;font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;font-size: 100%;overflow:scroll;}
+.left { float:left; }
+.right{ float:right; }
