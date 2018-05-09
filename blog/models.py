@@ -3,7 +3,8 @@ from passlib.hash import bcrypt
 from datetime import datetime
 import os
 import uuid
-
+#Some of the functions were inspired by NicoleWhite, https://github.com/nicolewhite/neo4j-flask,
+# it gave us a good idea of how the database works and how it should operate
 url = os.environ.get('GRAPHENEDB_URL', 'http://localhost:7474')
 username = os.environ.get('NEO4J_USERNAME')
 password = os.environ.get('NEO4J_PASSWORD')
