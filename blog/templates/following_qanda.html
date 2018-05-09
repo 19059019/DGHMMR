@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h3>Questions from people you follow</h3>
+
+<ul class="questions">
+  {% for ques_row in questions %}
+    <div style="border:solid black 1.5px; padding: 5px 5px 5px 5px">
+      
+    	<b>{{ ques_row.question.title }}</b>
+    	by <a href="{{ url_for('profile', username=ques_row.username) }}">{{ ques_row.username }}</a>
+    	on {{ ques_row.question.date }}
+        <a href="{{ url_for('bookmark_question', question_id=ques_row.question.id) }}">Bookmark</a><br>
+    	<br>
+    	{{ ques_row.question.text }}
+
+        {% if session.username %}
+        <h3>Add New Answer</h3>
+        <form action="{{ url_for('add_answer') }}" method="post">
+            <dl>
+                <dt>Text:</dt>
+                <dd><textarea name="text" rows="5" cols="40"></textarea></dd>
+            </dl>
+            <input type="hidden" name="questionID" value="{{ ques_row.question.id }}">
+            <input type="submit" value="Answer">
+        </form>
+        {% endif %}
+
+   </div>
+       <br>
+{% endfor %}
+    
+<h3>Answers from people you follow</h3>
+    
+<ul class="answers">
+
+{% for ans_row in answers %}
+
+    <h4>Answer to "{{ ans_row.question_title }}"</h4>
+    <b><a href="{{ url_for('profile', username=ans_row.answerer.username) }}">{{ ans_row.answerer.username }}</a></b>
+    answered on {{ ans_row.answer.date }} 
+    <a href="{{ url_for('upvote_answer', answer_id=ans_row.answer.id) }}">upvote ({{ans_row.answer.upvotes}})</a>
+    <br>
+    {{ ans_row.answer.text }}
+
+    {% else %}
+    There aren't any answers to questions you follow yet!
+
+{% endfor %}
+</ul>
+
+</ul>
+
+
+{% endblock %}

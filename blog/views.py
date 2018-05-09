@@ -415,5 +415,6 @@ def followed_answers():
 @app.route('/following_qanda', methods=['GET', 'POST'])
 def following_qanda():
     questions = get_following_q(session['username'])
-    answers = get_following_a(session['username'])
-    return render_template('questions.html', questions=questions, answers=answers)
+    #answers = get_following_a(session['username'])
+    answers = get_followed_answers(session['username'])
+    return render_template('following_qanda.html', questions=questions, answers=answers)
